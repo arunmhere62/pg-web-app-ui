@@ -347,7 +347,7 @@ export function QuickSetupScreen() {
   const hasNoLocation = !selectedPGLocationId && !isFetchingExistingRooms
 
   return (
-    <div className='container mx-auto max-w-5xl px-4 py-6'>
+    <div className='container mx-auto max-w-6xl px-4 py-4'>
       <PageHeader
         title='Quick Setup'
         subtitle='Create your rooms and beds in one go'

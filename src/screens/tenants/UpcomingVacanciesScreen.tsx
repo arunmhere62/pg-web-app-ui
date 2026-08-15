@@ -72,7 +72,7 @@ export function UpcomingVacanciesScreen() {
   const vacancies: UpcomingVacancy[] = data?.data ?? []
 
   return (
-    <div className='container mx-auto max-w-4xl px-4 py-4'>
+    <div className='container mx-auto max-w-6xl px-4 py-4'>
       <PageHeader
         title='Upcoming Vacancies'
         subtitle={`Beds going vacant in next ${days} days`}

@@ -380,7 +380,7 @@ export function TenantDetailsScreen() {
   }, [tenant])
 
   return (
-    <div className='container mx-auto max-w-4xl px-4 py-4'>
+    <div className='container mx-auto max-w-6xl px-4 py-4'>
       <PageHeader
           title={tenant?.name || 'Tenant Details'}
           showBack={true}

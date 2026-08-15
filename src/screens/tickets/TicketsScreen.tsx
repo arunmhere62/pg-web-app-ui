@@ -140,7 +140,7 @@ export function TicketsScreen() {
   }, [tickets.length, total])
 
   return (
-    <div className='container mx-auto max-w-6xl px-4 py-6'>
+    <div className='container mx-auto max-w-6xl px-4 py-4'>
       <PageHeader
         title='Tickets'
         showBack={true}

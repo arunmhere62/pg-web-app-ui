@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { CountryPhoneSelector, COUNTRIES } from '@/components/form/country-phone-selector'
+import { Input } from '@/components/ui/input'
 
 interface OtpInputProps {
   value: string
@@ -114,7 +114,6 @@ export function TenantLoginScreen() {
 
   const [phase, setPhase] = useState<'phone' | 'otp'>('phone')
   const [fullPhone, setFullPhone] = useState<string>('')
-  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0])
 
   const [sendOtp, { isLoading: sending }] = useTenantSendOtpMutation()
   const [verifyOtp, { isLoading: verifying }] = useTenantVerifyOtpMutation()
@@ -133,7 +132,7 @@ export function TenantLoginScreen() {
 
   const onSendOtp = async (values: PhoneForm) => {
     const phone = values.phone.trim()
-    const normalized = `${selectedCountry.phoneCode} ${phone}`
+    const normalized = phone.startsWith('+') ? phone : `+91 ${phone}`
 
     try {
       await sendOtp({ phone: normalized }).unwrap()
@@ -211,11 +210,10 @@ export function TenantLoginScreen() {
                           Phone Number
                         </FormLabel>
                         <FormControl className='w-full'>
-                          <CountryPhoneSelector
-                            selectedCountry={selectedCountry}
-                            onSelectCountry={setSelectedCountry}
-                            phoneValue={field.value}
-                            onPhoneChange={field.onChange}
+                          <Input
+                            placeholder='Enter 10 digit number'
+                            {...field}
+                            className='h-10 rounded-lg border-slate-200 focus:border-slate-400'
                           />
                         </FormControl>
                         <FormMessage className='text-left' />

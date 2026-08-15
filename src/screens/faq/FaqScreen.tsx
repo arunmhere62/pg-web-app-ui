@@ -68,7 +68,7 @@ const HELPER_GUIDES: HelperGuide[] = [
 export function FaqScreen() {
   return (
     <div className='legal-page'>
-      <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
+      <div className='container mx-auto max-w-6xl px-4 py-4'>
         <div className='mx-auto max-w-5xl'>
           <div className='relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 sm:p-10'>
             <div className='flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between'>

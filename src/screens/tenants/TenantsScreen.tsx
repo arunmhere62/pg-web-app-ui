@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useGetAllRoomsQuery, type Room } from '@/services/roomsApi'
 import {
-  useDeleteTenantMutation,
   useLazyGetTenantsQuery,
   type GetTenantsParams,
   type Tenant,
@@ -10,35 +9,17 @@ import { useAppSelector } from '@/store/hooks'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   BedDouble,
-  ChevronDown,
-  ChevronUp,
   CircleAlert,
   Filter,
   Search,
   Plus,
-  Pencil,
-  Trash2,
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { showErrorAlert, showSuccessAlert } from '@/utils/toast'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Input } from '@/components/ui/input'
-import { RoomSkeleton } from '@/components/ui/room-skeleton'
 import { PageHeader } from '@/components/form/page-header'
 import { TenantFilterModal } from '@/components/tenants/TenantFilterModal'
 import { usePermissions } from '@/hooks/usePermissions'
@@ -58,18 +39,6 @@ const asArray = <T,>(value: unknown): T[] => {
   return Array.isArray(value) ? (value as T[]) : []
 }
 
-type UnpaidMonth = {
-  month_name?: string
-  cycle_start?: string
-  cycle_end?: string
-}
-
-const getUnpaidMonths = (t: unknown): UnpaidMonth[] => {
-  if (!t || typeof t !== 'object') return []
-  const v = (t as Record<string, unknown>)['unpaid_months']
-  return asArray<UnpaidMonth>(v)
-}
-
 type ErrorLike = {
   data?: {
     message?: string
@@ -77,29 +46,39 @@ type ErrorLike = {
   message?: string
 }
 
+const getInitial = (name?: string): string => {
+  const n = String(name ?? '').trim()
+  return n ? n.charAt(0).toUpperCase() : 'T'
+}
+
+const formatDate = (raw?: string): string => {
+  if (!raw) return ''
+  const d = new Date(raw)
+  if (Number.isNaN(d.getTime())) return String(raw).split('T')[0]
+  try {
+    return d.toLocaleDateString('en-IN')
+  } catch {
+    return String(raw).split('T')[0]
+  }
+}
+
+const PaymentBadge = ({ color, text }: { color: string; text: string }) => (
+  <span
+    className='inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-bold text-white whitespace-nowrap'
+    style={{ backgroundColor: color }}
+  >
+    {text}
+  </span>
+)
+
 export function TenantsScreen() {
   const navigate = useNavigate()
   const { can } = usePermissions()
   const canCreate = can(Permission.CREATE_TENANT)
-  const canEdit = can(Permission.EDIT_TENANT)
-  const canDelete = can(Permission.DELETE_TENANT)
 
   const selectedPGLocationId = useAppSelector(
     (s) => s.pgLocations.selectedPGLocationId
   )
-
-  const [expandedPaymentCards, setExpandedPaymentCards] = useState<Set<number>>(
-    () => new Set()
-  )
-
-  const togglePaymentDetails = (tenantId: number) => {
-    setExpandedPaymentCards((prev) => {
-      const next = new Set(prev)
-      if (next.has(tenantId)) next.delete(tenantId)
-      else next.add(tenantId)
-      return next
-    })
-  }
 
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
@@ -169,10 +148,8 @@ export function TenantsScreen() {
     isLoading: isFetching,
   })
 
-  // Accumulate tenants data when response changes
   useEffect(() => {
     if (tenantsResponse?.data) {
-      // Use setTimeout to avoid synchronous setState in effect
       setTimeout(() => {
         if (page === 1) {
           setAllTenants(tenantsResponse.data)
@@ -189,14 +166,12 @@ export function TenantsScreen() {
         setHasLoadedOnce(true)
       }, 0)
 
-      // Check if we need to load more immediately after data loads
       setTimeout(() => {
         checkScroll()
       }, 100)
     }
   }, [tenantsResponse, page, checkScroll])
 
-  // Load more data when infinite scroll triggers
   useEffect(() => {
     if (isInfiniteFetching && hasMore && !isFetching && selectedPGLocationId) {
       const nextPage = page + 1
@@ -219,8 +194,6 @@ export function TenantsScreen() {
   const tenants: Tenant[] = allTenants
   const isLoading: boolean = isFetching && !hasLoadedOnce
 
-  const [deleteTenant, { isLoading: deleting }] = useDeleteTenantMutation()
-
   const pagination = tenantsResponse?.pagination as Pagination | undefined
 
   const total: number = Number(pagination?.total ?? tenants.length)
@@ -231,27 +204,6 @@ export function TenantsScreen() {
       : error && typeof error === 'object' && 'message' in error
         ? (error as ErrorLike).message
         : undefined
-
-  const [deleteTarget, setDeleteTarget] = useState<Tenant | null>(null)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-
-  const askDelete = (t: Tenant) => {
-    setDeleteTarget(t)
-    setDeleteDialogOpen(true)
-  }
-
-  const confirmDelete = async () => {
-    if (!deleteTarget) return
-    try {
-      await deleteTenant(deleteTarget.s_no).unwrap()
-      showSuccessAlert('Tenant deleted successfully')
-      setDeleteDialogOpen(false)
-      setDeleteTarget(null)
-      void trigger(queryOptions)
-    } catch (e: unknown) {
-      showErrorAlert(e, 'Delete Error')
-    }
-  }
 
   const filterCount: number =
     Number(statusFilter !== 'ALL') +
@@ -273,26 +225,132 @@ export function TenantsScreen() {
         ? 'Occupied'
         : statusFilter
 
-  const getInitial = (name?: string): string => {
-    const n = String(name ?? '').trim()
-    return n ? n.charAt(0).toUpperCase() : 'T'
-  }
+  const renderTenantCard = (t: Tenant, index: number) => {
+    const tenantImage: string =
+      Array.isArray(t.images) && t.images.length > 0 ? t.images[0] : ''
 
-  const formatDate = (raw?: string): string => {
-    if (!raw) return ''
-    const d = new Date(raw)
-    if (Number.isNaN(d.getTime())) return String(raw).split('T')[0]
-    try {
-      return d.toLocaleDateString('en-IN')
-    } catch {
-      return String(raw).split('T')[0]
-    }
+    const roomNo: string | undefined = t.rooms?.room_no
+    const bedNo: string | undefined = t.beds?.bed_no
+    const rentPrice: number | undefined = t.rooms?.rent_price
+
+    const isRentPaid: boolean = Boolean(t.is_rent_paid)
+    const isRentPartial: boolean = Boolean(t.is_rent_partial)
+    const rentDueAmount: number = Number(t.rent_due_amount ?? 0)
+    const isAdvancePaid: boolean = Boolean(t.is_advance_paid)
+    const hasOutstandingAmount: boolean = rentDueAmount > 0
+
+    const unpaidMonths = (t as unknown as Record<string, unknown>)['unpaid_months'] as Array<{ month_name?: string }> | undefined
+    const hasPendingRent: boolean =
+      Number((t as unknown as Record<string, unknown>)['pending_due_amount'] ?? 0) > 0 ||
+      (Array.isArray(unpaidMonths) && unpaidMonths.length > 0)
+
+    const statusColor =
+      t.status === 'ACTIVE'
+        ? '#10B981'
+        : t.status === 'CHECKED_OUT'
+          ? '#F59E0B'
+          : '#EF4444'
+
+    const leftBorderClass: string = hasOutstandingAmount
+      ? isRentPartial
+        ? 'border-l-[3px] border-l-orange-500'
+        : 'border-l-[3px] border-l-amber-500'
+      : 'border-l-0'
+
+    return (
+      <motion.div
+        key={`tenant-${t.s_no}`}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -15 }}
+        transition={{
+          duration: 0.25,
+          delay: Math.min(index * 0.04, 0.3),
+          ease: 'easeOut',
+        }}
+        className={`cursor-pointer rounded-xl border bg-white p-3 transition-all hover:shadow-md ${leftBorderClass}`}
+        onClick={() => navigate(`/tenants/${t.s_no}`)}
+      >
+        {/* Row 1: Avatar + Name/Room/Bed/Rent + Status */}
+        <div className='flex items-center gap-3'>
+          {/* Avatar */}
+          <div className='h-11 w-11 shrink-0 overflow-hidden rounded-full bg-blue-600'>
+            {tenantImage ? (
+              <img
+                src={tenantImage}
+                alt=''
+                className='h-full w-full object-cover'
+              />
+            ) : (
+              <div className='grid h-full w-full place-items-center text-base font-bold text-white'>
+                {getInitial(t.name)}
+              </div>
+            )}
+          </div>
+
+          {/* Name + Room/Bed/Rent */}
+          <div className='min-w-0 flex-1'>
+            <div className='truncate text-[15px] font-bold text-slate-800'>
+              {t.name || 'Tenant'}
+            </div>
+            <div className='mt-0.5 flex flex-wrap items-center gap-2.5 text-xs text-slate-500'>
+              {roomNo && <span className='font-medium'>🏠 {roomNo}</span>}
+              {bedNo && <span className='font-medium'>🛏️ {bedNo}</span>}
+              {typeof rentPrice === 'number' && (
+                <span className='font-semibold text-blue-600'>
+                  ₹{rentPrice}/mo
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Status Badge */}
+          <div
+            className='shrink-0 rounded-lg px-2 py-1 text-[11px] font-bold'
+            style={{
+              backgroundColor: `${statusColor}20`,
+              color: statusColor,
+            }}
+          >
+            {t.status}
+          </div>
+        </div>
+
+        {/* Row 2: Payment Badges */}
+        <div className='mt-3 flex flex-wrap gap-1.5'>
+          {isRentPaid && (
+            <PaymentBadge color='#10B981' text='✅ Rent Paid' />
+          )}
+          {isAdvancePaid && (
+            <PaymentBadge color='#10B981' text='✅ Advance Paid' />
+          )}
+          {isRentPartial && (
+            <PaymentBadge color='#F97316' text='⏳ Partial Payment' />
+          )}
+          {hasPendingRent && (
+            <PaymentBadge color='#F59E0B' text='📅 Pending Rent' />
+          )}
+          {hasOutstandingAmount && (
+            <PaymentBadge color='#EF4444' text={`₹${rentDueAmount} Due`} />
+          )}
+          {!isAdvancePaid && (
+            <PaymentBadge color='#F59E0B' text='💰 No Advance' />
+          )}
+        </div>
+
+        {/* Row 3: Check-in Date */}
+        <div className='mt-2.5 text-xs text-slate-400'>
+          📅 Check-in: {formatDate(t.check_in_date)}
+        </div>
+      </motion.div>
+    )
   }
 
   return (
     <div className='container mx-auto max-w-6xl px-4 py-4'>
       <PageHeader
         title='Tenants'
+        subtitle={`Showing ${tenants.length} of ${total} tenants`}
         showBack={true}
         right={
           <div className='flex items-center gap-2'>
@@ -337,58 +395,68 @@ export function TenantsScreen() {
         </div>
       ) : (
         <>
-          <div className='mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4'>
-            <div className='relative w-full sm:max-w-xs'>
-              <Search className='pointer-events-none absolute top-2.5 left-3 size-4 text-muted-foreground' />
-              <Input
+          {/* Search & Filter Bar */}
+          <div className='mt-4 flex items-center gap-2'>
+            <div className='relative flex-1'>
+              <Search className='pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground' />
+              <input
+                type='text'
+                placeholder='Search by name...'
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value)
                   setPage(1)
                 }}
-                placeholder='Search by name, phone'
-                className='h-10 pl-10 text-sm'
+                onKeyDown={(e) => e.key === 'Enter' && void trigger(queryOptions)}
+                className='h-10 w-full rounded-lg border border-border bg-muted pl-10 pr-4 text-sm outline-none focus:border-primary'
               />
             </div>
-
-            <div className='flex flex-wrap items-center gap-3'>
-              <Button
-                variant={filterCount > 0 ? 'default' : 'outline'}
-                size='sm'
-                onClick={() => setFiltersOpen(true)}
-                className='h-9 px-4'
-              >
-                <Filter className='mr-2 size-4' />
-                Filters
-                {filterCount > 0 ? (
-                  <span className='ml-2 text-xs font-semibold'>
-                    ({filterCount})
-                  </span>
-                ) : null}
-              </Button>
-
-              <Badge variant='outline' className='h-8 px-3 text-xs font-medium'>
-                {activeRoomLabel} · {statusLabel}
-              </Badge>
-            </div>
+            <Button
+              variant={filterCount > 0 ? 'default' : 'outline'}
+              size='sm'
+              onClick={() => setFiltersOpen(true)}
+              className='h-10 px-4'
+            >
+              <Filter className='mr-2 size-4' />
+              Filter
+              {filterCount > 0 && (
+                <span className='ml-1.5 flex size-5 items-center justify-center rounded-full bg-white text-xs font-bold text-primary'>
+                  {filterCount}
+                </span>
+              )}
+            </Button>
           </div>
 
-          {/* Floating Count Display */}
-          {selectedPGLocationId && Number.isFinite(total) && total > 0 && (
-            <div className='fixed right-6 bottom-6 z-50'>
-              <div className='rounded-full border-2 border-background bg-primary px-4 py-2 text-primary-foreground shadow-lg'>
-                <div className='text-sm font-bold'>
-                  {tenants.length}/{total}
+          {/* Active filter badges */}
+          {(filterCount > 0 || selectedRoomId !== null) && (
+            <div className='mt-3 flex flex-wrap items-center gap-2'>
+              <Badge variant='outline' className='h-7 px-2.5 text-xs font-medium'>
+                {activeRoomLabel} · {statusLabel}
+              </Badge>
+              {selectedRoomId !== null && (
+                <div className='flex items-center gap-2 rounded-lg border-l-4 border-l-blue-600 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-600'>
+                  🏠 Showing all tenants from selected room ({tenants.length} total)
                 </div>
-                <div className='text-xs opacity-90'>Tenants</div>
-              </div>
+              )}
             </div>
           )}
 
-          <div className='mt-4'>
+          <div className='mt-4 pb-16'>
             {isLoading ? (
-              <div className='rounded-md border bg-card px-3 py-4 text-sm text-muted-foreground'>
-                Loading...
+              <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3'>
+                {Array.from({ length: 9 }).map((_, index) => (
+                  <div
+                    key={`skeleton-${index}`}
+                    className='flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3'
+                  >
+                    <div className='h-11 w-11 animate-pulse rounded-full bg-slate-200' />
+                    <div className='flex-1'>
+                      <div className='mb-1.5 h-3.5 w-1/3 animate-pulse rounded bg-slate-300' />
+                      <div className='h-2.5 w-1/2 animate-pulse rounded bg-slate-200' />
+                    </div>
+                    <div className='h-5 w-16 animate-pulse rounded-lg bg-slate-200' />
+                  </div>
+                ))}
               </div>
             ) : tenants.length === 0 ? (
               <EmptyState
@@ -401,308 +469,9 @@ export function TenantsScreen() {
                 }
               />
             ) : (
-              <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+              <div className='grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3'>
                 <AnimatePresence>
-                  {tenants.map((t, index) => {
-                    const tenantImage: string =
-                      Array.isArray(t.images) && t.images.length > 0
-                        ? t.images[0]
-                        : ''
-
-                    const roomNo: string | undefined = t.rooms?.room_no
-                    const bedNo: string | undefined = t.beds?.bed_no
-                    const rentPrice: number | undefined = t.rooms?.rent_price
-                    const occupation: string | undefined = t.occupation
-
-                    const isRentPaid: boolean = Boolean(t.is_rent_paid)
-                    const isRentPartial: boolean = Boolean(t.is_rent_partial)
-                    const rentDueAmount: number = Number(t.rent_due_amount ?? 0)
-                    const partialDueAmount: number = Number(
-                      t.partial_due_amount ?? 0
-                    )
-                    const pendingDueAmount: number = Number(
-                      t.pending_due_amount ?? 0
-                    )
-                    const isAdvancePaid: boolean = Boolean(t.is_advance_paid)
-                    const unpaidMonths: UnpaidMonth[] = getUnpaidMonths(t)
-
-                    const hasOutstandingAmount: boolean = rentDueAmount > 0
-                    const hasBothPartialAndPending: boolean =
-                      partialDueAmount > 0 && pendingDueAmount > 0
-                    const showPaymentDetails: boolean =
-                      expandedPaymentCards.has(t.s_no)
-
-                    const leftBorderClass: string = hasOutstandingAmount
-                      ? isRentPartial
-                        ? 'border-l-orange-500'
-                        : 'border-l-amber-500'
-                      : 'border-l-transparent'
-
-                    const leftBorderWidthClass: string = hasOutstandingAmount
-                      ? 'border-l-4'
-                      : 'border-l-0'
-
-                    return (
-                      <motion.div
-                        key={`tenant-${t.s_no}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{
-                          duration: 0.3,
-                          delay: index * 0.05,
-                          ease: 'easeOut',
-                        }}
-                      >
-                        <Card
-                          className={`h-full py-0 ${leftBorderWidthClass} ${leftBorderClass}`}
-                        >
-                          <CardContent className='flex h-full flex-col gap-3 p-4'>
-                            <div className='flex items-start gap-3'>
-                              <div className='h-14 w-14 shrink-0 overflow-hidden rounded-full bg-primary text-primary-foreground'>
-                                {tenantImage ? (
-                                  <img
-                                    src={tenantImage}
-                                    alt=''
-                                    className='h-full w-full object-cover'
-                                  />
-                                ) : (
-                                  <div className='grid h-full w-full place-items-center text-lg font-bold'>
-                                    {getInitial(t.name)}
-                                  </div>
-                                )}
-                              </div>
-
-                              <div className='min-w-0 flex-1'>
-                                <div className='flex items-start justify-between gap-2'>
-                                  <div className='min-w-0'>
-                                    <div className='truncate text-base font-bold'>
-                                      {t.name || 'Tenant'}
-                                    </div>
-                                    <div className='mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground'>
-                                      {roomNo ? <span>🏠 {roomNo}</span> : null}
-                                      {bedNo ? <span>🛏️ {bedNo}</span> : null}
-                                      {typeof rentPrice === 'number' ? (
-                                        <span className='font-semibold text-primary'>
-                                          💰 ₹{rentPrice}/mo
-                                        </span>
-                                      ) : null}
-                                    </div>
-                                  </div>
-
-                                  <div className='shrink-0'>
-                                    <span
-                                      className={
-                                        'inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ' +
-                                        (t.status === 'ACTIVE'
-                                          ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
-                                          : t.status === 'CHECKED_OUT'
-                                            ? 'border border-amber-200 bg-amber-50 text-amber-700'
-                                            : 'border border-red-200 bg-red-50 text-red-700')
-                                      }
-                                    >
-                                      {t.status}
-                                    </span>
-                                  </div>
-                                </div>
-
-                                {occupation ? (
-                                  <div className='mt-2 text-sm text-muted-foreground'>
-                                    💼 {occupation}
-                                  </div>
-                                ) : null}
-                              </div>
-                            </div>
-
-                            <div>
-                              <div className='text-[11px] font-semibold text-muted-foreground'>
-                                Payment Status
-                              </div>
-                              <div className='mt-2 flex flex-wrap items-center gap-2'>
-                                {isRentPaid ? (
-                                  <span className='rounded-full bg-emerald-500 px-3 py-1 text-[11px] font-bold text-white'>
-                                    ✅ Rent PAID
-                                  </span>
-                                ) : null}
-                                {isAdvancePaid ? (
-                                  <span className='rounded-full bg-emerald-500 px-3 py-1 text-[11px] font-bold text-white'>
-                                    ✅ Advance Paid
-                                  </span>
-                                ) : null}
-                                {isRentPartial ? (
-                                  <span className='rounded-full bg-orange-500 px-3 py-1 text-[11px] font-bold text-white'>
-                                    ⏳ PARTIAL
-                                  </span>
-                                ) : null}
-                                {!isRentPaid ? (
-                                  <span className='rounded-full bg-amber-500 px-3 py-1 text-[11px] font-bold text-white'>
-                                    📅 PENDING RENT
-                                  </span>
-                                ) : null}
-                                {hasOutstandingAmount ? (
-                                  <span className='rounded-full bg-red-500 px-3 py-1 text-[11px] font-bold text-white'>
-                                    ₹{rentDueAmount} DUE
-                                  </span>
-                                ) : null}
-                                {!isAdvancePaid ? (
-                                  <span className='rounded-full bg-amber-500 px-3 py-1 text-[11px] font-bold text-white'>
-                                    💰 NO ADVANCE
-                                  </span>
-                                ) : null}
-                              </div>
-                            </div>
-
-                            {hasOutstandingAmount ? (
-                              <div
-                                className={
-                                  'overflow-hidden rounded-lg border ' +
-                                  (isRentPartial
-                                    ? 'border-orange-200 bg-orange-50'
-                                    : 'border-amber-200 bg-amber-50')
-                                }
-                              >
-                                <button
-                                  type='button'
-                                  className='flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left'
-                                  onClick={() => togglePaymentDetails(t.s_no)}
-                                >
-                                  <div className='min-w-0 flex-1'>
-                                    <div
-                                      className={
-                                        'truncate text-xs font-bold ' +
-                                        (isRentPartial
-                                          ? 'text-orange-600'
-                                          : 'text-amber-700')
-                                      }
-                                    >
-                                      {hasBothPartialAndPending
-                                        ? 'Partial + Pending'
-                                        : isRentPartial
-                                          ? 'Partial Payment'
-                                          : 'Pending Payment'}
-                                    </div>
-                                    <div className='mt-0.5 truncate text-[11px] text-muted-foreground'>
-                                      Due ₹{rentDueAmount}
-                                      {unpaidMonths.length > 0
-                                        ? ` · ${unpaidMonths.length} month(s)`
-                                        : ''}
-                                      {!isAdvancePaid ? ' · No advance' : ''}
-                                    </div>
-                                  </div>
-                                  {showPaymentDetails ? (
-                                    <ChevronUp
-                                      className={
-                                        isRentPartial
-                                          ? 'size-4 text-orange-600'
-                                          : 'size-4 text-amber-700'
-                                      }
-                                    />
-                                  ) : (
-                                    <ChevronDown
-                                      className={
-                                        isRentPartial
-                                          ? 'size-4 text-orange-600'
-                                          : 'size-4 text-amber-700'
-                                      }
-                                    />
-                                  )}
-                                </button>
-
-                                {showPaymentDetails ? (
-                                  <div className='px-3 pb-3'>
-                                    {partialDueAmount > 0 &&
-                                    pendingDueAmount > 0 ? (
-                                      <div className='mt-1 text-[11px] text-muted-foreground'>
-                                        Partial: ₹{partialDueAmount} • Pending:
-                                        ₹{pendingDueAmount}
-                                      </div>
-                                    ) : null}
-
-                                    {unpaidMonths.length > 0 ? (
-                                      <div className='mt-3'>
-                                        <div
-                                          className={
-                                            'text-[11px] font-bold ' +
-                                            (isRentPartial
-                                              ? 'text-orange-600'
-                                              : 'text-amber-700')
-                                          }
-                                        >
-                                          Unpaid months
-                                        </div>
-                                        {unpaidMonths
-                                          .slice(0, 2)
-                                          .map((m, idx) => (
-                                            <div
-                                              key={String(idx)}
-                                              className='mt-1 text-[10px] text-muted-foreground'
-                                            >
-                                              {m.month_name
-                                                ? m.month_name
-                                                : 'Month'}
-                                              {m.cycle_start && m.cycle_end
-                                                ? ` (${m.cycle_start} to ${m.cycle_end})`
-                                                : ''}
-                                            </div>
-                                          ))}
-                                        {unpaidMonths.length > 2 ? (
-                                          <div className='mt-1 text-[10px] text-muted-foreground'>
-                                            +{unpaidMonths.length - 2} more
-                                          </div>
-                                        ) : null}
-                                      </div>
-                                    ) : null}
-
-                                    {!isAdvancePaid ? (
-                                      <div className='mt-3 text-[11px] text-muted-foreground'>
-                                        No advance payment
-                                      </div>
-                                    ) : null}
-                                  </div>
-                                ) : null}
-                              </div>
-                            ) : null}
-
-                            <div className='text-[11px] text-muted-foreground'>
-                              Check-in: {formatDate(t.check_in_date)}
-                            </div>
-
-                            <div className='mt-auto flex flex-col gap-2 pt-1'>
-                              <Button
-                                className='w-full'
-                                disabled={!selectedPGLocationId}
-                                onClick={() => navigate(`/tenants/${t.s_no}`)}
-                              >
-                                View Details
-                              </Button>
-                              <div className='flex gap-2'>
-                                <Button
-                                  variant='outline'
-                                  size='sm'
-                                  className='flex-1'
-                                  disabled={!canEdit}
-                                  onClick={() => navigate(`/tenants/${t.s_no}/edit`)}
-                                >
-                                  <Pencil className='mr-1 size-3.5' />
-                                  Edit
-                                </Button>
-                                <Button
-                                  variant='outline'
-                                  size='sm'
-                                  className='flex-1 text-red-600 hover:bg-red-50'
-                                  disabled={!canDelete}
-                                  onClick={() => askDelete(t)}
-                                >
-                                  <Trash2 className='mr-1 size-3.5' />
-                                  Delete
-                                </Button>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </motion.div>
-                    )
-                  })}
+                  {tenants.map((t, index) => renderTenantCard(t, index))}
                 </AnimatePresence>
               </div>
             )}
@@ -717,17 +486,20 @@ export function TenantsScreen() {
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
-                      className='mb-8 space-y-2'
+                      className='mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3'
                     >
-                      {Array.from({ length: 2 }).map((_, index) => (
-                        <motion.div
-                          key={`skeleton-${index}`}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.1, duration: 0.3 }}
+                      {Array.from({ length: 6 }).map((_, index) => (
+                        <div
+                          key={`load-skeleton-${index}`}
+                          className='flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3'
                         >
-                          <RoomSkeleton />
-                        </motion.div>
+                          <div className='h-11 w-11 animate-pulse rounded-full bg-slate-200' />
+                          <div className='flex-1'>
+                            <div className='mb-1.5 h-3.5 w-1/3 animate-pulse rounded bg-slate-300' />
+                            <div className='h-2.5 w-1/2 animate-pulse rounded bg-slate-200' />
+                          </div>
+                          <div className='h-5 w-16 animate-pulse rounded-lg bg-slate-200' />
+                        </div>
                       ))}
                     </motion.div>
                   )}
@@ -744,25 +516,9 @@ export function TenantsScreen() {
                       className='mt-8 mb-12 border-t py-4 text-center'
                     >
                       <div className='flex items-center justify-center gap-2 text-sm text-muted-foreground'>
-                        <motion.div
-                          className='h-px max-w-16 flex-1 bg-border'
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ duration: 0.5, delay: 0.2 }}
-                        ></motion.div>
-                        <motion.span
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.3, delay: 0.3 }}
-                        >
+                        <span>
                           Showing all {allTenants.length} tenants
-                        </motion.span>
-                        <motion.div
-                          className='h-px max-w-16 flex-1 bg-border'
-                          initial={{ scaleX: 0 }}
-                          animate={{ scaleX: 1 }}
-                          transition={{ duration: 0.5, delay: 0.2 }}
-                        ></motion.div>
+                        </span>
                       </div>
                     </motion.div>
                   )}
@@ -772,32 +528,6 @@ export function TenantsScreen() {
           </div>
         </>
       )}
-
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Tenant</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete{' '}
-              <span className='font-semibold'>{deleteTarget?.name}</span>? This
-              action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              onClick={() => {
-                setDeleteDialogOpen(false)
-                setDeleteTarget(null)
-              }}
-            >
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} disabled={deleting}>
-              {deleting ? 'Deleting...' : 'Delete'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <TenantFilterModal
         open={filtersOpen}

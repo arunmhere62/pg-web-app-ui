@@ -155,7 +155,7 @@ export function EmployeePermissionOverridesScreen() {
 
   if (!isSuperAdmin) {
     return (
-      <div className='container mx-auto max-w-4xl px-4 py-4'>
+      <div className='container mx-auto max-w-6xl px-4 py-4'>
         <PageHeader title='Access Settings' showBack={true} />
         <div className='mt-4 rounded-lg border border-dashed bg-muted/30 px-6 py-16 text-center'>
           <p className='text-lg font-semibold'>Access Denied</p>
@@ -168,7 +168,7 @@ export function EmployeePermissionOverridesScreen() {
   }
 
   return (
-    <div className='container mx-auto max-w-4xl px-4 py-4'>
+    <div className='container mx-auto max-w-6xl px-4 py-4'>
       <PageHeader
         title='Access Settings'
         showBack={true}

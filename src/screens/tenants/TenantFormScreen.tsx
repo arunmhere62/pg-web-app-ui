@@ -530,7 +530,7 @@ export function TenantFormScreen() {
     (tenantError as ErrorLike | undefined)?.message
 
   return (
-    <div className='container mx-auto max-w-4xl px-4 py-4'>
+    <div className='container mx-auto max-w-6xl px-4 py-4'>
       <PageHeader
         title={isEditMode ? 'Edit Tenant' : 'Add Tenant'}
         showBack={true}
