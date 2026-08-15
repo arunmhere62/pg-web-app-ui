@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   useLazyGetAllRoomsQuery,
-  useDeleteRoomMutation,
   type Room,
 } from '@/services/roomsApi'
 import { useAppSelector } from '@/store/hooks'
@@ -97,7 +96,6 @@ export function RoomsScreen() {
 
   const [trigger, { data: roomsResponse, isLoading, isFetching, error }] =
     useLazyGetAllRoomsQuery()
-  const [deleteRoom, { isLoading: deleting }] = useDeleteRoomMutation()
 
   useEffect(() => {
     setTimeout(() => {
