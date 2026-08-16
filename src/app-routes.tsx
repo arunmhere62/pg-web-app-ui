@@ -1,154 +1,178 @@
-import { HomePage } from '@/screens/HomePage'
-import { PublicHome } from '@/screens/PublicHome'
-import { LoginScreen } from '@/screens/auth/LoginScreen'
-import { SignupScreen } from '@/screens/auth/SignupScreen'
-import { RoleSelectionScreen } from '@/screens/auth/RoleSelectionScreen'
-import { TenantLoginScreen } from '@/screens/auth/TenantLoginScreen'
-import { TenantDashboardScreen } from '@/features/tenant/screens/TenantDashboardScreen'
-import { TenantPGDetailsScreen } from '@/features/tenant/screens/TenantPGDetailsScreen'
-import { TenantRoomScreen } from '@/features/tenant/screens/TenantRoomScreen'
-import { TenantPaymentsScreen } from '@/features/tenant/screens/TenantPaymentsScreen'
-import { TenantTicketsScreen } from '@/features/tenant/screens/TenantTicketsScreen'
-import { TenantSettingsScreen } from '@/features/tenant/screens/TenantSettingsScreen'
-import { EmployeeDetailsScreen } from '@/screens/employees/EmployeeDetailsScreen'
-import { EmployeePermissionOverridesScreen } from '@/screens/employees/EmployeePermissionOverridesScreen'
-import { EmployeesScreen } from '@/screens/employees/EmployeesScreen'
-import { ExpensesScreen } from '@/screens/expenses/ExpensesScreen'
-import { FaqScreen } from '@/screens/faq/FaqScreen'
-import { AdvancePaymentsScreen } from '@/screens/payments/AdvancePaymentsScreen'
-import { PaymentsScreen } from '@/screens/payments/PaymentsScreen'
-import { RefundPaymentsScreen } from '@/screens/payments/RefundPaymentsScreen'
-import { RentPaymentsScreen } from '@/screens/payments/RentPaymentsScreen'
-import { PGDetailsScreen } from '@/screens/pg-locations/PGDetailsScreen'
-import { PGLocationsScreen } from '@/screens/pg-locations/PGLocationsScreen'
-import { AboutUsScreen } from '@/screens/public/AboutUsScreen'
-import { ContactUsScreen } from '@/screens/public/ContactUsScreen'
-import { PgDirectoryScreen } from '@/screens/public/PgDirectoryScreen'
-import { PgDetailsScreen } from '@/screens/public/PgDetailsScreen'
-import { PgLocationScreen } from '@/screens/public/PgLocationScreen'
-import { PrivacyScreen } from '@/screens/public/PrivacyScreen'
-import { RefundPolicyScreen } from '@/screens/public/RefundPolicyScreen'
-import { SoftwareServicesScreen } from '@/screens/public/SoftwareServicesScreen'
-import { TermsScreen } from '@/screens/public/TermsScreen'
-import { QuickSetupScreen } from '@/screens/QuickSetupScreen'
-import { RoomDetailsScreen } from '@/screens/rooms/RoomDetailsScreen'
-import { RoomElectricityBillsScreen } from '@/screens/rooms/RoomElectricityBillsScreen'
-import { RoomsScreen } from '@/screens/rooms/RoomsScreen'
-import { SettingsScreen } from '@/screens/settings/SettingsScreen'
-import { UserProfileScreen } from '@/screens/settings/UserProfileScreen'
-import { AuthSubscriptionsScreen } from '@/screens/subscription/AuthSubscriptionsScreen'
-import { SubscriptionConfirmScreen } from '@/screens/subscription/SubscriptionConfirmScreen'
-import { SubscriptionHistoryScreen } from '@/screens/subscription/SubscriptionHistoryScreen'
-import { SubscriptionsScreen } from '@/screens/subscription/SubscriptionsScreen'
-import { TenantDetailsScreen } from '@/screens/tenants/TenantDetailsScreen'
-import { TenantFormScreen } from '@/screens/tenants/TenantFormScreen'
-import { TenantsScreen } from '@/screens/tenants/TenantsScreen'
-import { UpcomingVacanciesScreen } from '@/screens/tenants/UpcomingVacanciesScreen'
-import { TicketsScreen } from '@/screens/tickets/TicketsScreen'
-import { VisitorDetailsScreen } from '@/screens/visitors/VisitorDetailsScreen'
-import { VisitorFormScreen } from '@/screens/visitors/VisitorFormScreen'
-import { VisitorsScreen } from '@/screens/visitors/VisitorsScreen'
+import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
 import { PublicLayout } from '@/components/layout/public-layout'
 import { TenantLayout } from '@/features/tenant/components/TenantLayout'
+import { Loader2 } from 'lucide-react'
+
+// ─── Lazy-loaded screens (code-splitting for smaller initial bundle) ───
+
+// Authenticated — Dashboard
+const HomePage = lazy(() => import('@/screens/HomePage').then(m => ({ default: m.HomePage })))
+const QuickSetupScreen = lazy(() => import('@/screens/QuickSetupScreen').then(m => ({ default: m.QuickSetupScreen })))
+const PGLocationsScreen = lazy(() => import('@/screens/pg-locations/PGLocationsScreen').then(m => ({ default: m.PGLocationsScreen })))
+const PGDetailsScreen = lazy(() => import('@/screens/pg-locations/PGDetailsScreen').then(m => ({ default: m.PGDetailsScreen })))
+const EmployeesScreen = lazy(() => import('@/screens/employees/EmployeesScreen').then(m => ({ default: m.EmployeesScreen })))
+const EmployeeDetailsScreen = lazy(() => import('@/screens/employees/EmployeeDetailsScreen').then(m => ({ default: m.EmployeeDetailsScreen })))
+const EmployeePermissionOverridesScreen = lazy(() => import('@/screens/employees/EmployeePermissionOverridesScreen').then(m => ({ default: m.EmployeePermissionOverridesScreen })))
+const TenantsScreen = lazy(() => import('@/screens/tenants/TenantsScreen').then(m => ({ default: m.TenantsScreen })))
+const UpcomingVacanciesScreen = lazy(() => import('@/screens/tenants/UpcomingVacanciesScreen').then(m => ({ default: m.UpcomingVacanciesScreen })))
+const TenantFormScreen = lazy(() => import('@/screens/tenants/TenantFormScreen').then(m => ({ default: m.TenantFormScreen })))
+const TenantDetailsScreen = lazy(() => import('@/screens/tenants/TenantDetailsScreen').then(m => ({ default: m.TenantDetailsScreen })))
+const RentPaymentsScreen = lazy(() => import('@/screens/payments/RentPaymentsScreen').then(m => ({ default: m.RentPaymentsScreen })))
+const AdvancePaymentsScreen = lazy(() => import('@/screens/payments/AdvancePaymentsScreen').then(m => ({ default: m.AdvancePaymentsScreen })))
+const RefundPaymentsScreen = lazy(() => import('@/screens/payments/RefundPaymentsScreen').then(m => ({ default: m.RefundPaymentsScreen })))
+const PaymentsScreen = lazy(() => import('@/screens/payments/PaymentsScreen').then(m => ({ default: m.PaymentsScreen })))
+const VisitorsScreen = lazy(() => import('@/screens/visitors/VisitorsScreen').then(m => ({ default: m.VisitorsScreen })))
+const VisitorFormScreen = lazy(() => import('@/screens/visitors/VisitorFormScreen').then(m => ({ default: m.VisitorFormScreen })))
+const VisitorDetailsScreen = lazy(() => import('@/screens/visitors/VisitorDetailsScreen').then(m => ({ default: m.VisitorDetailsScreen })))
+const SettingsScreen = lazy(() => import('@/screens/settings/SettingsScreen').then(m => ({ default: m.SettingsScreen })))
+const UserProfileScreen = lazy(() => import('@/screens/settings/UserProfileScreen').then(m => ({ default: m.UserProfileScreen })))
+const TicketsScreen = lazy(() => import('@/screens/tickets/TicketsScreen').then(m => ({ default: m.TicketsScreen })))
+const RoomsScreen = lazy(() => import('@/screens/rooms/RoomsScreen').then(m => ({ default: m.RoomsScreen })))
+const RoomDetailsScreen = lazy(() => import('@/screens/rooms/RoomDetailsScreen').then(m => ({ default: m.RoomDetailsScreen })))
+const RoomElectricityBillsScreen = lazy(() => import('@/screens/rooms/RoomElectricityBillsScreen').then(m => ({ default: m.RoomElectricityBillsScreen })))
+const ExpensesScreen = lazy(() => import('@/screens/expenses/ExpensesScreen').then(m => ({ default: m.ExpensesScreen })))
+const AuthSubscriptionsScreen = lazy(() => import('@/screens/subscription/AuthSubscriptionsScreen').then(m => ({ default: m.AuthSubscriptionsScreen })))
+const SubscriptionConfirmScreen = lazy(() => import('@/screens/subscription/SubscriptionConfirmScreen').then(m => ({ default: m.SubscriptionConfirmScreen })))
+const SubscriptionHistoryScreen = lazy(() => import('@/screens/subscription/SubscriptionHistoryScreen').then(m => ({ default: m.SubscriptionHistoryScreen })))
+const FaqScreen = lazy(() => import('@/screens/faq/FaqScreen').then(m => ({ default: m.FaqScreen })))
+
+// Public — SEO pages (eagerly loaded for fast first paint)
+import { PublicHome } from '@/screens/PublicHome'
+import { RoleSelectionScreen } from '@/screens/auth/RoleSelectionScreen'
+import { LoginScreen } from '@/screens/auth/LoginScreen'
+import { TenantLoginScreen } from '@/screens/auth/TenantLoginScreen'
+import { SignupScreen } from '@/screens/auth/SignupScreen'
+import { PgDirectoryScreen } from '@/screens/public/PgDirectoryScreen'
+import { PgLocationScreen } from '@/screens/public/PgLocationScreen'
+
+// Public — lazy-loaded policy/info pages
+const AboutUsScreen = lazy(() => import('@/screens/public/AboutUsScreen').then(m => ({ default: m.AboutUsScreen })))
+const ContactUsScreen = lazy(() => import('@/screens/public/ContactUsScreen').then(m => ({ default: m.ContactUsScreen })))
+const PgDetailsScreen = lazy(() => import('@/screens/public/PgDetailsScreen').then(m => ({ default: m.PgDetailsScreen })))
+const PrivacyScreen = lazy(() => import('@/screens/public/PrivacyScreen').then(m => ({ default: m.PrivacyScreen })))
+const RefundPolicyScreen = lazy(() => import('@/screens/public/RefundPolicyScreen').then(m => ({ default: m.RefundPolicyScreen })))
+const SoftwareServicesScreen = lazy(() => import('@/screens/public/SoftwareServicesScreen').then(m => ({ default: m.SoftwareServicesScreen })))
+const TermsScreen = lazy(() => import('@/screens/public/TermsScreen').then(m => ({ default: m.TermsScreen })))
+const SubscriptionsScreen = lazy(() => import('@/screens/subscription/SubscriptionsScreen').then(m => ({ default: m.SubscriptionsScreen })))
+
+// Tenant portal
+const TenantDashboardScreen = lazy(() => import('@/features/tenant/screens/TenantDashboardScreen').then(m => ({ default: m.TenantDashboardScreen })))
+const TenantPGDetailsScreen = lazy(() => import('@/features/tenant/screens/TenantPGDetailsScreen').then(m => ({ default: m.TenantPGDetailsScreen })))
+const TenantRoomScreen = lazy(() => import('@/features/tenant/screens/TenantRoomScreen').then(m => ({ default: m.TenantRoomScreen })))
+const TenantPaymentsScreen = lazy(() => import('@/features/tenant/screens/TenantPaymentsScreen').then(m => ({ default: m.TenantPaymentsScreen })))
+const TenantTicketsScreen = lazy(() => import('@/features/tenant/screens/TenantTicketsScreen').then(m => ({ default: m.TenantTicketsScreen })))
+const TenantSettingsScreen = lazy(() => import('@/features/tenant/screens/TenantSettingsScreen').then(m => ({ default: m.TenantSettingsScreen })))
+
+// ─── Loading fallback ───
+
+function RouteLoader() {
+  return (
+    <div className='flex min-h-[60vh] items-center justify-center'>
+      <Loader2 className='size-8 animate-spin text-primary' />
+    </div>
+  )
+}
 
 export function AppRoutes() {
   return (
-    <Routes>
-      {/* Authenticated routes first - includes hybrid policy pages */}
-      <Route element={<AuthenticatedLayout />}>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/quick-setup' element={<QuickSetupScreen />} />
-        <Route path='/pg-locations' element={<PGLocationsScreen />} />
-        <Route path='/pg-locations/:id' element={<PGDetailsScreen />} />
-        <Route path='/employees' element={<EmployeesScreen />} />
-        <Route path='/employees/:id' element={<EmployeeDetailsScreen />} />
-        <Route path='/employees/:id/permissions' element={<EmployeePermissionOverridesScreen />} />
-        <Route path='/tenants' element={<TenantsScreen />} />
-        <Route path='/tenants/upcoming-vacancies' element={<UpcomingVacanciesScreen />} />
-        <Route path='/tenants/new' element={<TenantFormScreen />} />
-        <Route path='/tenants/:id' element={<TenantDetailsScreen />} />
-        <Route path='/tenants/:id/edit' element={<TenantFormScreen />} />
-        <Route path='/tenants/:id/rent-payments' element={<RentPaymentsScreen />} />
-        <Route path='/tenants/:id/advance-payments' element={<AdvancePaymentsScreen />} />
-        <Route path='/tenants/:id/refund-payments' element={<RefundPaymentsScreen />} />
-        <Route path='/visitors' element={<VisitorsScreen />} />
-        <Route path='/visitors/new' element={<VisitorFormScreen />} />
-        <Route path='/visitors/:id' element={<VisitorDetailsScreen />} />
-        <Route path='/visitors/:id/edit' element={<VisitorFormScreen />} />
-        <Route path='/settings' element={<SettingsScreen />} />
-        <Route path='/settings/profile' element={<UserProfileScreen />} />
-        <Route path='/tickets' element={<TicketsScreen />} />
-        <Route path='/rooms' element={<RoomsScreen />} />
-        <Route path='/rooms/:id' element={<RoomDetailsScreen />} />
-        <Route
-          path='/rooms/:id/electricity-bills'
-          element={<RoomElectricityBillsScreen />}
-        />
-        <Route path='/payments' element={<PaymentsScreen />} />
-        <Route path='/payments/rent' element={<RentPaymentsScreen />} />
-        <Route path='/payments/advance' element={<AdvancePaymentsScreen />} />
-        <Route path='/payments/refund' element={<RefundPaymentsScreen />} />
-        <Route path='/expenses' element={<ExpensesScreen />} />
-        <Route
-          path='/subscriptions/manage'
-          element={<AuthSubscriptionsScreen />}
-        />
-        <Route
-          path='/subscriptions/confirm'
-          element={<SubscriptionConfirmScreen />}
-        />
-        <Route
-          path='/subscriptions/history'
-          element={<SubscriptionHistoryScreen />}
-        />
-        {/* Dashboard policy pages - shown inside app with sidebar */}
-        <Route path='/dashboard/faq' element={<FaqScreen />} />
-        <Route path='/dashboard/about' element={<AboutUsScreen />} />
-        <Route path='/dashboard/terms' element={<TermsScreen />} />
-        <Route path='/dashboard/privacy' element={<PrivacyScreen />} />
-        <Route
-          path='/dashboard/refund-policy'
-          element={<RefundPolicyScreen />}
-        />
-        <Route path='/dashboard/contact' element={<ContactUsScreen />} />
-        <Route
-          path='/dashboard/software-services'
-          element={<SoftwareServicesScreen />}
-        />
-      </Route>
-      {/* Public routes - for logged-out users */}
-      <Route element={<PublicLayout />}>
-        <Route path='/home' element={<PublicHome />} />
-        <Route path='/login' element={<RoleSelectionScreen />} />
-        <Route path='/owner-login' element={<LoginScreen />} />
-        <Route path='/tenant-login' element={<TenantLoginScreen />} />
-        <Route path='/signup' element={<SignupScreen />} />
-        <Route path='/faq' element={<FaqScreen />} />
-        <Route path='/about' element={<AboutUsScreen />} />
-        <Route path='/terms' element={<TermsScreen />} />
-        <Route path='/privacy' element={<PrivacyScreen />} />
-        <Route path='/refund-policy' element={<RefundPolicyScreen />} />
-        <Route path='/contact' element={<ContactUsScreen />} />
-        <Route path='/software-services' element={<SoftwareServicesScreen />} />
-        <Route path='/subscriptions' element={<SubscriptionsScreen />} />
-        {/* Public PG Directory — no login required */}
-        <Route path='/pg-directory' element={<PgDirectoryScreen />} />
-        <Route path='/pg-directory/:id' element={<PgDetailsScreen />} />
-        {/* Location-based landing pages handled by catch-all below */}
-      </Route>
-      {/* Tenant routes - for tenant portal */}
-      <Route element={<TenantLayout />}>
-        <Route path='/tenant-dashboard' element={<TenantDashboardScreen />} />
-        <Route path='/tenant-dashboard/pg-details' element={<TenantPGDetailsScreen />} />
-        <Route path='/tenant-dashboard/room' element={<TenantRoomScreen />} />
-        <Route path='/tenant-dashboard/payments' element={<TenantPaymentsScreen />} />
-        <Route path='/tenant-dashboard/tickets' element={<TenantTicketsScreen />} />
-        <Route path='/tenant-dashboard/settings' element={<TenantSettingsScreen />} />
-      </Route>
-      <Route path='*' element={<SmartCatchAll />} />
-    </Routes>
+    <Suspense fallback={<RouteLoader />}>
+      <Routes>
+        {/* Authenticated routes first - includes hybrid policy pages */}
+        <Route element={<AuthenticatedLayout />}>
+          <Route path='/' element={<HomePage />} />
+          <Route path='/quick-setup' element={<QuickSetupScreen />} />
+          <Route path='/pg-locations' element={<PGLocationsScreen />} />
+          <Route path='/pg-locations/:id' element={<PGDetailsScreen />} />
+          <Route path='/employees' element={<EmployeesScreen />} />
+          <Route path='/employees/:id' element={<EmployeeDetailsScreen />} />
+          <Route path='/employees/:id/permissions' element={<EmployeePermissionOverridesScreen />} />
+          <Route path='/tenants' element={<TenantsScreen />} />
+          <Route path='/tenants/upcoming-vacancies' element={<UpcomingVacanciesScreen />} />
+          <Route path='/tenants/new' element={<TenantFormScreen />} />
+          <Route path='/tenants/:id' element={<TenantDetailsScreen />} />
+          <Route path='/tenants/:id/edit' element={<TenantFormScreen />} />
+          <Route path='/tenants/:id/rent-payments' element={<RentPaymentsScreen />} />
+          <Route path='/tenants/:id/advance-payments' element={<AdvancePaymentsScreen />} />
+          <Route path='/tenants/:id/refund-payments' element={<RefundPaymentsScreen />} />
+          <Route path='/visitors' element={<VisitorsScreen />} />
+          <Route path='/visitors/new' element={<VisitorFormScreen />} />
+          <Route path='/visitors/:id' element={<VisitorDetailsScreen />} />
+          <Route path='/visitors/:id/edit' element={<VisitorFormScreen />} />
+          <Route path='/settings' element={<SettingsScreen />} />
+          <Route path='/settings/profile' element={<UserProfileScreen />} />
+          <Route path='/tickets' element={<TicketsScreen />} />
+          <Route path='/rooms' element={<RoomsScreen />} />
+          <Route path='/rooms/:id' element={<RoomDetailsScreen />} />
+          <Route
+            path='/rooms/:id/electricity-bills'
+            element={<RoomElectricityBillsScreen />}
+          />
+          <Route path='/payments' element={<PaymentsScreen />} />
+          <Route path='/payments/rent' element={<RentPaymentsScreen />} />
+          <Route path='/payments/advance' element={<AdvancePaymentsScreen />} />
+          <Route path='/payments/refund' element={<RefundPaymentsScreen />} />
+          <Route path='/expenses' element={<ExpensesScreen />} />
+          <Route
+            path='/subscriptions/manage'
+            element={<AuthSubscriptionsScreen />}
+          />
+          <Route
+            path='/subscriptions/confirm'
+            element={<SubscriptionConfirmScreen />}
+          />
+          <Route
+            path='/subscriptions/history'
+            element={<SubscriptionHistoryScreen />}
+          />
+          {/* Dashboard policy pages - shown inside app with sidebar */}
+          <Route path='/dashboard/faq' element={<FaqScreen />} />
+          <Route path='/dashboard/about' element={<AboutUsScreen />} />
+          <Route path='/dashboard/terms' element={<TermsScreen />} />
+          <Route path='/dashboard/privacy' element={<PrivacyScreen />} />
+          <Route
+            path='/dashboard/refund-policy'
+            element={<RefundPolicyScreen />}
+          />
+          <Route path='/dashboard/contact' element={<ContactUsScreen />} />
+          <Route
+            path='/dashboard/software-services'
+            element={<SoftwareServicesScreen />}
+          />
+        </Route>
+        {/* Public routes - for logged-out users */}
+        <Route element={<PublicLayout />}>
+          <Route path='/home' element={<PublicHome />} />
+          <Route path='/login' element={<RoleSelectionScreen />} />
+          <Route path='/owner-login' element={<LoginScreen />} />
+          <Route path='/tenant-login' element={<TenantLoginScreen />} />
+          <Route path='/signup' element={<SignupScreen />} />
+          <Route path='/faq' element={<FaqScreen />} />
+          <Route path='/about' element={<AboutUsScreen />} />
+          <Route path='/terms' element={<TermsScreen />} />
+          <Route path='/privacy' element={<PrivacyScreen />} />
+          <Route path='/refund-policy' element={<RefundPolicyScreen />} />
+          <Route path='/contact' element={<ContactUsScreen />} />
+          <Route path='/software-services' element={<SoftwareServicesScreen />} />
+          <Route path='/subscriptions' element={<SubscriptionsScreen />} />
+          {/* Public PG Directory — no login required */}
+          <Route path='/pg-directory' element={<PgDirectoryScreen />} />
+          <Route path='/pg-directory/:id' element={<PgDetailsScreen />} />
+          {/* Location-based landing pages handled by catch-all below */}
+        </Route>
+        {/* Tenant routes - for tenant portal */}
+        <Route element={<TenantLayout />}>
+          <Route path='/tenant-dashboard' element={<TenantDashboardScreen />} />
+          <Route path='/tenant-dashboard/pg-details' element={<TenantPGDetailsScreen />} />
+          <Route path='/tenant-dashboard/room' element={<TenantRoomScreen />} />
+          <Route path='/tenant-dashboard/payments' element={<TenantPaymentsScreen />} />
+          <Route path='/tenant-dashboard/tickets' element={<TenantTicketsScreen />} />
+          <Route path='/tenant-dashboard/settings' element={<TenantSettingsScreen />} />
+        </Route>
+        <Route path='*' element={<SmartCatchAll />} />
+      </Routes>
+    </Suspense>
   )
 }
 

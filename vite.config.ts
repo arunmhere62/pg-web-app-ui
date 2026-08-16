@@ -13,6 +13,10 @@ export default defineConfig({
     tailwindcss(),
     sitemapPlugin({
       hostname: HOSTNAME,
+      // Use the public API URL for build-time sitemap generation.
+      // The Docker build can't use the relative /api/v1 path, so we use the
+      // absolute URL. Override with SITEMAP_API_URL env var if needed.
+      apiUrl: process.env.SITEMAP_API_URL || 'https://mobapi.indianpgmanagement.com',
       routes: [
         { path: '/home', priority: 1.0, changefreq: 'daily' },
         { path: '/pg-directory', priority: 0.9, changefreq: 'daily' },
@@ -47,5 +51,19 @@ export default defineConfig({
   build: {
     // Copy public folder files (robots.txt, manifest.json, sitemap.xml) to dist
     copyPublicDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React core
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          // UI libraries
+          'ui-vendor': ['lucide-react', 'class-variance-authority', 'clsx', 'tailwind-merge'],
+          // State management & data
+          'data-vendor': ['@reduxjs/toolkit', 'react-redux', 'react-helmet-async'],
+          // Form & utilities
+          'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod', 'date-fns', 'sonner'],
+        },
+      },
+    },
   },
 })
