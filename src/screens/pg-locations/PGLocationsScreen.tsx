@@ -72,7 +72,8 @@ export function PGLocationsScreen() {
     if (!target) return
     openEdit(target)
     window.history.replaceState({}, document.title)
-  }, [editPgId, locations])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editPgId]) // Only re-run when editPgId changes, not when locations array reference changes
 
   const fetchErrorMessage =
     (error as { data?: { message?: string }; message?: string })?.data

@@ -1,4 +1,5 @@
 import { PageHeader } from '@/components/form/page-header'
+import { Seo, breadcrumbSchema } from '@/components/seo'
 
 function SectionHeader({ title }: { title: string }) {
   return <h2 className='mb-3 border-b py-2 text-lg font-medium'>{title}</h2>
@@ -6,6 +7,14 @@ function SectionHeader({ title }: { title: string }) {
 
 export function RefundPolicyScreen() {
   return (
+    <>
+    <Seo
+      title='Cancellation & Refund Policy'
+      description='IPGM cancellation and refund policy — understand our refund terms for subscriptions and services on the Indian PG Management System platform.'
+      keywords={['IPGM refund policy', 'cancellation policy', 'refund terms', 'PG management refund']}
+      canonical='/refund-policy'
+      schema={breadcrumbSchema([{ name: 'Home', url: '/home' }, { name: 'Refund Policy', url: '/refund-policy' }])}
+    />
     <div className='legal-page relative overflow-hidden'>
 
       <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
@@ -22,7 +31,7 @@ export function RefundPolicyScreen() {
                 <div className='space-y-2 text-sm text-muted-foreground'>
                   <p>
                     This policy is published by <strong>Satz Techno Solutions</strong> (Partnership), doing business as
-                    <strong> IndianPGManagement.com (IPMS)</strong>, with registered office at No 1/50, P.K Street Mettu
+                    <strong> IndianPGManagement.com (IPGM)</strong>, with registered office at No 1/50, P.K Street Mettu
                     Kantigai, Gudapakkam, Chennai, Thiruvallur, Tamil Nadu, 600124, India.
                   </p>
                 </div>
@@ -32,7 +41,7 @@ export function RefundPolicyScreen() {
                 <SectionHeader title='Overview' />
                 <div className='space-y-2 text-sm text-muted-foreground'>
                   <p>
-                    IndianPGManagement.com ("IPMS") provides a cloud-based property management platform
+                    IndianPGManagement.com ("IPGM") provides a cloud-based property management platform
                     for PG (Paying Guest) operators. Payments made on the platform are for software
                     subscription licenses and related services. This policy explains our position on
                     cancellations and refunds.
@@ -193,7 +202,7 @@ export function RefundPolicyScreen() {
                     <strong>Website:</strong> www.IndianPGManagement.com
                   </p>
                   <p>
-                    <strong>Business:</strong> Indian PG Management System (IPMS)
+                    <strong>Business:</strong> Indian PG Management System (IPGM)
                   </p>
                 </div>
               </section>
@@ -202,5 +211,6 @@ export function RefundPolicyScreen() {
         </div>
       </div>
     </div>
+    </>
   )
 }

@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Seo } from '@/components/seo'
 
 interface OtpInputProps {
   value: string
@@ -183,7 +184,9 @@ export function TenantLoginScreen() {
   }
 
   return (
-    <div className='flex h-full w-full flex-col overflow-hidden lg:flex-row'>
+    <>
+      <Seo title='Tenant Login' description='Login to your tenant portal on IPGM.' canonical='/tenant-login' noindex />
+      <div className='flex h-full w-full flex-col overflow-hidden lg:flex-row'>
       {/* Form Section */}
       <div className='order-1 flex h-full w-full items-center justify-center overflow-y-auto bg-white lg:order-2 lg:w-1/2'>
         <div className='w-full max-w-[380px] px-6 py-8'>
@@ -314,7 +317,7 @@ export function TenantLoginScreen() {
       <div className='order-2 hidden h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white lg:order-1 lg:flex lg:w-1/2'>
         <div className='flex flex-col items-center justify-center p-12'>
           <div className='mb-6 text-5xl'>🏠</div>
-          <h1 className='mb-3 text-3xl font-bold'>IPMS</h1>
+          <h1 className='mb-3 text-3xl font-bold'>IPGM</h1>
           <p className='text-center text-base text-white/80'>
             Indian PG Management System
           </p>
@@ -324,5 +327,6 @@ export function TenantLoginScreen() {
         </div>
       </div>
     </div>
+    </>
   )
 }

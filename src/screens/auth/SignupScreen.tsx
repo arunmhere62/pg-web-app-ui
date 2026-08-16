@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Seo } from '@/components/seo'
 import { showErrorToast, showSuccessToast } from '@/utils/toast'
 
 import {
@@ -231,7 +232,9 @@ export function SignupScreen() {
   }
 
   return (
-    <div className='flex h-full w-full flex-col overflow-hidden lg:flex-row'>
+    <>
+      <Seo title='Sign Up' description='Create an IPGM account to start managing your PG or co-living space.' canonical='/signup' noindex />
+      <div className='flex h-full w-full flex-col overflow-hidden lg:flex-row'>
       {/* Form - On top for mobile, right side for desktop */}
       <div className='order-1 flex h-full w-full items-center justify-center overflow-y-auto bg-white lg:order-2 lg:w-1/2'>
         <div className='w-full max-w-[420px] px-8 py-12'>
@@ -509,7 +512,7 @@ export function SignupScreen() {
       <div className='order-2 hidden h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white lg:order-1 lg:flex lg:w-1/2'>
         <div className='flex flex-col items-center justify-center p-12'>
           <div className='mb-8 text-6xl'>🏠</div>
-          <h1 className='mb-4 text-4xl font-bold'>IPMS</h1>
+          <h1 className='mb-4 text-4xl font-bold'>IPGM</h1>
           <p className='text-center text-lg text-white/80'>
             Indian PG Management System
           </p>
@@ -519,5 +522,6 @@ export function SignupScreen() {
         </div>
       </div>
     </div>
+    </>
   )
 }

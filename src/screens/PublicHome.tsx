@@ -24,6 +24,7 @@ import {
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Seo, organizationSchema, websiteSchema } from '@/components/seo'
 import bannerMultiplePgSelection from '@/assets/banner-add-images/mutiple-pg-selection.png'
 import bannerRentFollowUps from '@/assets/banner-add-images/rent-follow-ups.png'
 import bannerRoomBedAllocation from '@/assets/banner-add-images/room-bed-allocation.png'
@@ -62,7 +63,7 @@ const AppPreviewRow = memo(function AppPreviewRow({ banners }: { banners: Banner
         <div>
           <div className='text-2xl font-semibold tracking-tight sm:text-3xl'>App preview</div>
           <div className='mt-2 max-w-2xl text-sm text-muted-foreground'>
-            Explore key screens from the IPMS mobile app.
+            Explore key screens from the IPGM mobile app.
           </div>
         </div>
 
@@ -228,8 +229,16 @@ export function PublicHome() {
   )
 
   return (
-    <div className='pb-16'>
-      <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
+    <>
+      <Seo
+        title='IPGM — PG & Co-living Management System in India'
+        description='IPGM (Indian PG Management System) is the all-in-one platform for managing PG accommodations, co-living spaces, and hostels. Tenant management, rent tracking, CRM, WhatsApp messaging, and more. Find verified PGs across India.'
+        keywords={['PG management system', 'co-living India', 'PG management software', 'tenant management', 'rent tracking', 'hostel management', 'IPGM', 'Indian PG management']}
+        canonical='/home'
+        schema={[organizationSchema(), websiteSchema()]}
+      />
+      <div className='pb-16'>
+        <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
         <div className='relative overflow-hidden rounded-3xl border border-primary/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.75),rgba(255,255,255,0.45))] p-6 shadow-[0_22px_60px_rgba(15,23,42,0.10)] backdrop-blur sm:p-10'>
           <div className='pointer-events-none absolute -left-20 -top-28 h-[320px] w-[320px] rounded-full bg-primary/15 blur-3xl' />
           <div className='pointer-events-none absolute -right-24 top-20 h-[360px] w-[360px] rounded-full bg-emerald-500/10 blur-3xl' />
@@ -237,7 +246,7 @@ export function PublicHome() {
           <div className='relative grid gap-10'>
             <div className='min-w-0 max-w-3xl'>
               <Badge variant='secondary' className='mb-4'>
-                IPMS - Indian PG Management System
+                IPGM - Indian PG Management System
               </Badge>
 
               <div className='text-3xl font-semibold leading-tight sm:text-5xl'>
@@ -329,7 +338,7 @@ export function PublicHome() {
             <div className='text-2xl font-semibold'>The solution</div>
           </div>
           <div className='text-sm text-muted-foreground'>
-            IPMS replaces manual tracking with invoices, reminders, and clear dashboards.
+            IPGM replaces manual tracking with invoices, reminders, and clear dashboards.
           </div>
         </div>
 
@@ -543,7 +552,7 @@ export function PublicHome() {
             <div>
               <div className='mb-2 text-xs font-semibold uppercase tracking-wider text-foreground'>Business</div>
               <div className='space-y-1 text-xs text-muted-foreground'>
-                <div className='font-medium text-foreground'>Indian PG Management System (IPMS)</div>
+                <div className='font-medium text-foreground'>Indian PG Management System (IPGM)</div>
                 <div>Website: www.IndianPGManagement.com</div>
                 <div>
                   Email:{' '}
@@ -603,7 +612,7 @@ export function PublicHome() {
         <div className='mt-8 rounded-3xl border border-primary/15 bg-[radial-gradient(900px_circle_at_20%_0%,rgba(37,99,235,0.14),transparent_55%),radial-gradient(900px_circle_at_85%_70%,rgba(16,185,129,0.10),transparent_55%),linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0.50))] p-6 backdrop-blur sm:p-10'>
           <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
             <div>
-              <div className='text-2xl font-semibold'>Ready to grow your PG with IPMS?</div>
+              <div className='text-2xl font-semibold'>Ready to grow your PG with IPGM?</div>
               <div className='mt-2 text-sm text-muted-foreground'>
                 Start free today and switch from Excel + WhatsApp to one clear system.
               </div>
@@ -625,5 +634,6 @@ export function PublicHome() {
         </div>
       </div>
     </div>
+    </>
   )
 }

@@ -1,4 +1,5 @@
 import { PageHeader } from '@/components/form/page-header'
+import { Seo, breadcrumbSchema } from '@/components/seo'
 
 // Simple section header component with minimal styling
 function SectionHeader({ title }: { title: string }) {
@@ -9,6 +10,14 @@ function SectionHeader({ title }: { title: string }) {
 
 export function PrivacyScreen() {
   return (
+    <>
+    <Seo
+      title='Privacy Policy'
+      description='IPGM privacy policy — how we collect, use, and protect your personal data on the Indian PG Management System platform.'
+      keywords={['IPGM privacy policy', 'privacy policy', 'data protection', 'PG management privacy']}
+      canonical='/privacy'
+      schema={breadcrumbSchema([{ name: 'Home', url: '/home' }, { name: 'Privacy Policy', url: '/privacy' }])}
+    />
     <div className='legal-page'>
       <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
         <div className='mx-auto max-w-3xl'>
@@ -25,7 +34,7 @@ export function PrivacyScreen() {
                 <div className='mt-3 space-y-2 text-sm text-muted-foreground'>
                   <p>
                     This policy applies to the products and services of <strong>Satz Techno Solutions</strong>
-                    (Partnership), doing business as <strong>IndianPGManagement.com (IPMS)</strong>.
+                    (Partnership), doing business as <strong>IndianPGManagement.com (IPGM)</strong>.
                   </p>
                   <p>
                     <strong>Registered Office:</strong> No 1/50, P.K Street Mettu Kantigai, Gudapakkam,
@@ -39,7 +48,7 @@ export function PrivacyScreen() {
                 <div className='mt-3 space-y-2 text-sm text-muted-foreground'>
                   <p>
                     <strong>Satz Techno Solutions</strong> (Partnership), doing business as
-                    <strong> IndianPGManagement.com (IPMS)</strong>, operates the
+                    <strong> IndianPGManagement.com (IPGM)</strong>, operates the
                     <strong> IndianPGManagement.com</strong> website and mobile applications, which provide
                     the services of a cloud-based property management platform for PG (Paying Guest) operators.
                   </p>
@@ -465,5 +474,6 @@ export function PrivacyScreen() {
         </div>
       </div>
     </div>
+    </>
   )
 }

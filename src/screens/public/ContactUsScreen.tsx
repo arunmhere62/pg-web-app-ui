@@ -1,8 +1,17 @@
 import { Mail, Phone, MapPin, Clock } from 'lucide-react'
 import { PageHeader } from '@/components/form/page-header'
+import { Seo, breadcrumbSchema, contactPageSchema } from '@/components/seo'
 
 export function ContactUsScreen() {
   return (
+    <>
+    <Seo
+      title='Contact Us'
+      description='Get in touch with IPGM support. Email us at support@indianpgmanagement.com for help with PG management, co-living spaces, subscriptions, or technical support.'
+      keywords={['contact IPGM', 'PG management support', 'co-living help', 'Indian PG contact']}
+      canonical='/contact'
+      schema={[breadcrumbSchema([{ name: 'Home', url: '/home' }, { name: 'Contact Us', url: '/contact' }]), contactPageSchema()]}
+    />
     <div className='legal-page'>
       <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
         <div className='mx-auto max-w-3xl'>
@@ -82,7 +91,7 @@ export function ContactUsScreen() {
                 <div>
                   <p className='mb-1 text-sm font-semibold text-foreground'>Registered Office (India)</p>
                   <p className='text-sm text-muted-foreground'>Satz Techno Solutions (Partnership)</p>
-                  <p className='text-sm text-muted-foreground'>Doing Business As: Indian PG Management System (IPMS)</p>
+                  <p className='text-sm text-muted-foreground'>Doing Business As: Indian PG Management System (IPGM)</p>
                   <p className='text-sm text-muted-foreground'>No 1/50, P.K Street Mettu Kantigai, Gudapakkam</p>
                   <p className='text-sm text-muted-foreground'>Chennai, Thiruvallur, Tamil Nadu, 600124, India</p>
                   <p className='mt-1 text-sm text-muted-foreground'>Website: www.IndianPGManagement.com</p>
@@ -107,5 +116,6 @@ export function ContactUsScreen() {
         </div>
       </div>
     </div>
+    </>
   )
 }

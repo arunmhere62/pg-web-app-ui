@@ -24,8 +24,8 @@ export function AppFooter() {
           {/* Brand + contact */}
           <div className='space-y-3'>
             <Link to='/home' className='flex items-center gap-2 text-sm font-semibold text-foreground'>
-              <Logo className='size-6' alt='IPMS' />
-              <span>IPMS</span>
+              <Logo className='size-6' alt='IPGM' />
+              <span>IPGM</span>
             </Link>
             <p className='text-xs text-muted-foreground'>
               Indian PG Management System — manage your PG properties efficiently.

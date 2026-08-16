@@ -1,4 +1,5 @@
 import { PageHeader } from '@/components/form/page-header'
+import { Seo, breadcrumbSchema } from '@/components/seo'
 
 // Simple section header component with minimal styling
 function SectionHeader({ title }: { title: string }) {
@@ -9,6 +10,14 @@ function SectionHeader({ title }: { title: string }) {
 
 export function TermsScreen() {
   return (
+    <>
+    <Seo
+      title='Terms and Conditions'
+      description='Read the terms and conditions for using IPGM (Indian PG Management System) — the comprehensive platform for PG and co-living management in India.'
+      keywords={['IPGM terms', 'terms and conditions', 'PG management terms', 'co-living terms']}
+      canonical='/terms'
+      schema={breadcrumbSchema([{ name: 'Home', url: '/home' }, { name: 'Terms', url: '/terms' }])}
+    />
     <div className='legal-page'>
       <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
         <div className='mx-auto max-w-3xl'>
@@ -25,7 +34,7 @@ export function TermsScreen() {
                 <div className='mt-1 space-y-2 text-sm text-muted-foreground'>
                   <p>
                     These Terms are published by <strong>Satz Techno Solutions</strong> (Partnership),
-                    doing business as <strong>IndianPGManagement.com (IPMS)</strong>, with registered office at
+                    doing business as <strong>IndianPGManagement.com (IPGM)</strong>, with registered office at
                     No 1/50, P.K Street Mettu Kantigai, Gudapakkam, Chennai, Thiruvallur, Tamil Nadu, 600124, India.
                   </p>
                 </div>
@@ -138,7 +147,7 @@ export function TermsScreen() {
                 <SectionHeader title="Shipping & Delivery Policy" />
                 <div className='mt-3 space-y-2 text-sm text-muted-foreground'>
                   <p>
-                    Note: IPMS is a digital software service. We do not ship physical goods. If we introduce
+                    Note: IPGM is a digital software service. We do not ship physical goods. If we introduce
                     any merchandise or physical items in the future, the following shipping policy will apply.
                   </p>
                   <h3 className='font-medium'>Scope</h3>
@@ -200,5 +209,6 @@ export function TermsScreen() {
         </div>
       </div>
     </div>
+    </>
   )
 }

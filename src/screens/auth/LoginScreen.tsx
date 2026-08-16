@@ -38,6 +38,8 @@ import {
 
 import { Input } from '@/components/ui/input'
 
+import { Seo } from '@/components/seo'
+
 
 
 interface OtpInputProps {
@@ -354,7 +356,11 @@ export function LoginScreen() {
 
   return (
 
-    <div className='flex h-full w-full flex-col overflow-hidden lg:flex-row'>
+    <>
+
+      <Seo title='Login' description='Login to your IPGM account to manage your PG accommodations.' canonical='/owner-login' noindex />
+
+      <div className='flex h-full w-full flex-col overflow-hidden lg:flex-row'>
 
       {/* Form - On top for mobile, right side for desktop */}
 
@@ -648,7 +654,7 @@ export function LoginScreen() {
 
           <div className='mb-6 text-5xl'>🏠</div>
 
-          <h1 className='mb-3 text-3xl font-bold'>IPMS</h1>
+          <h1 className='mb-3 text-3xl font-bold'>IPGM</h1>
 
           <p className='text-center text-base text-white/80'>
 
@@ -667,6 +673,8 @@ export function LoginScreen() {
       </div>
 
     </div>
+
+    </>
 
   )
 

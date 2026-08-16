@@ -1,0 +1,40 @@
+# IPGM — Indian PG Management System
+# https://www.indianpgmanagement.com
+
+# Allow all crawlers full access
+User-agent: *
+Allow: /
+
+# Disallow private/authenticated routes
+Disallow: /dashboard
+Disallow: /tenant-dashboard
+Disallow: /login
+Disallow: /owner-login
+Disallow: /tenant-login
+Disallow: /signup
+Disallow: /quick-setup
+
+# Allow public directory pages for SEO
+Allow: /pg-directory
+Allow: /pg-directory/
+Allow: /home
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /terms
+Allow: /privacy
+Allow: /refund-policy
+Disallow: /api/
+
+# Block AI crawlers from scraping (optional — remove if you want AI indexing)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+# Sitemap
+Sitemap: https://www.indianpgmanagement.com/sitemap.xml

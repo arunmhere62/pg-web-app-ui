@@ -2,56 +2,133 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/src/assets/meta-logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 
-    <!-- Primary Meta Tags -->
-    <title>IPMS</title>
-    <meta name="title" content="IPMS" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Primary Meta Tags (overridden by react-helmet-async per page) -->
+    <title>IPGM — Indian PG Management System | PG & Co-living Management</title>
+    <meta name="title" content="IPGM — Indian PG Management System | PG & Co-living Management" />
     <meta
       name="description"
-      content="IPMS - Indian PG Management System"
+      content="IPGM (Indian PG Management System) is a comprehensive platform for managing PG accommodations, co-living spaces, and hostels. Find verified PGs with AC, WiFi, food, and more across India."
     />
+    <meta
+      name="keywords"
+      content="PG management, co-living India, PG accommodation, hostel management, rental management, tenant management, PG in Bangalore, PG in Chennai, co-living space, paying guest, PG directory India, IPGM"
+    />
+    <meta name="author" content="Satz Techno Solutions" />
+    <meta name="application-name" content="IPGM" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="bingbot" content="index, follow" />
+    <meta name="rating" content="general" />
+    <meta name="distribution" content="global" />
+    <meta name="revisit-after" content="7 days" />
+    <meta name="language" content="English" />
+
+    <!-- Canonical (overridden per page) -->
+    <link rel="canonical" href="https://www.indianpgmanagement.com" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="/" />
-    <meta property="og:title" content="IPMS" />
+    <meta property="og:site_name" content="IPGM — Indian PG Management System" />
+    <meta property="og:url" content="https://www.indianpgmanagement.com" />
+    <meta property="og:title" content="IPGM — Indian PG Management System" />
     <meta
       property="og:description"
-      content="IPMS - Indian PG Management System"
+      content="Comprehensive platform for managing PG accommodations, co-living spaces, and hostels. Find verified PGs across India."
     />
-    <meta
-      property="og:image"
-      content="/src/assets/meta-logo.png"
-    />
+    <meta property="og:image" content="https://www.indianpgmanagement.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="IPGM — Indian PG Management System" />
+    <meta property="og:locale" content="en_IN" />
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="/" />
-    <meta property="twitter:title" content="IPMS" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://www.indianpgmanagement.com" />
+    <meta name="twitter:title" content="IPGM — Indian PG Management System" />
     <meta
-      property="twitter:description"
-      content="IPMS - Indian PG Management System"
+      name="twitter:description"
+      content="Comprehensive platform for managing PG accommodations, co-living spaces, and hostels. Find verified PGs across India."
     />
-    <meta
-      property="twitter:image"
-      content="/src/assets/meta-logo.png"
-    />
+    <meta name="twitter:image" content="https://www.indianpgmanagement.com/og-image.png" />
+    <meta name="twitter:image:alt" content="IPGM — Indian PG Management System" />
 
-    <!-- font family -->
+    <!-- Mobile / PWA -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="IPGM" />
+
+    <!-- Performance: Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+    <!-- Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&display=swap"
       rel="stylesheet"
     />
 
-    <meta name="theme-color" content="#fff" />
+    <!-- Base Organization Schema (augmented per page) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Satz Techno Solutions",
+      "alternateName": "IPGM — Indian PG Management System",
+      "url": "https://www.indianpgmanagement.com",
+      "logo": "https://www.indianpgmanagement.com/logo.png",
+      "description": "Comprehensive platform for managing PG accommodations, co-living spaces, and hostels in India.",
+      "foundingDate": "2024",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "support@indianpgmanagement.com",
+        "availableLanguage": ["en", "hi", "ta"]
+      },
+      "sameAs": [
+        "https://www.facebook.com/indianpgmanagement",
+        "https://www.linkedin.com/company/indianpgmanagement"
+      ]
+    }
+    </script>
+
+    <!-- WebSite Schema with Search Action -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "IPGM — Indian PG Management System",
+      "url": "https://www.indianpgmanagement.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.indianpgmanagement.com/pg-directory?search={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
   </head>
 
   <body>
     <div id="root"></div>
+    <noscript>
+      <p style="text-align:center;padding:2rem;font-family:sans-serif;">
+        IPGM — Indian PG Management System requires JavaScript to run. Please enable JavaScript in your browser.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

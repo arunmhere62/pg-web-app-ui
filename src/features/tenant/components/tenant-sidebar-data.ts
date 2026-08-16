@@ -4,7 +4,7 @@ import { type SidebarData } from '@/components/layout/types'
 export const getTenantSidebarData = (): SidebarData => {
   return {
     user: {
-      name: 'IPMS Tenant',
+      name: 'IPGM Tenant',
       email: '',
       avatar: '',
     },

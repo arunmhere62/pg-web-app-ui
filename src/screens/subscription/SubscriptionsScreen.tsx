@@ -4,6 +4,7 @@ import { Check, Flame, LogIn, Sparkles, UserPlus, Zap } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { AppDialog } from '@/components/form/app-dialog'
 import { Button } from '@/components/ui/button'
+import { Seo, breadcrumbSchema } from '@/components/seo'
 
 const formatPrice = (price: string | number, currency?: string) => {
   const n = typeof price === 'string' ? parseFloat(price) : price
@@ -167,6 +168,17 @@ export function SubscriptionsScreen() {
   )[0]?.s_no
 
   return (
+    <>
+    <Seo
+      title='Subscription Plans — IPGM Pricing'
+      description='Choose the right IPGM subscription plan for your PG or co-living business. Manage tenants, rooms, rent, expenses, CRM, and WhatsApp messaging. Start from free.'
+      keywords={['IPGM pricing', 'PG management pricing', 'co-living software cost', 'subscription plans', 'PG management subscription']}
+      canonical='/subscriptions'
+      schema={breadcrumbSchema([
+        { name: 'Home', url: '/home' },
+        { name: 'Subscriptions', url: '/subscriptions' },
+      ])}
+    />
     <div className='min-h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950'>
       {/* Hero */}
       <div className='relative overflow-hidden px-4 pb-16 pt-16 text-center sm:pt-24'>
@@ -254,5 +266,6 @@ export function SubscriptionsScreen() {
         </div>
       </AppDialog>
     </div>
+    </>
   )
 }

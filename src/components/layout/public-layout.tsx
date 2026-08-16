@@ -3,15 +3,22 @@ import { getCookie } from '@/lib/cookies'
 import { PublicHeader } from '@/components/layout/public-header'
 import { AppFooter } from '@/components/layout/app-footer'
 
-export function PublicLayout() {
+type PublicLayoutProps = {
+  children?: React.ReactNode
+}
+
+export function PublicLayout({ children }: PublicLayoutProps) {
   const location = useLocation()
   const isEmbedded = new URLSearchParams(location.search).get('embed') === '1'
   const isHome = location.pathname === '/home'
+  const isPgDirectory = location.pathname.startsWith('/pg-directory') || location.pathname.startsWith('/pg-in-')
   const isAuthScreen = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/owner-login' || location.pathname === '/tenant-login'
 
   const accessToken = getCookie('access_token')
 
-  if (!isEmbedded && accessToken) {
+  // PG Directory and location pages are accessible to everyone (logged in or not)
+  // Auth screens are accessible even with a stale token (avoids redirect loop)
+  if (!isEmbedded && accessToken && !isPgDirectory && !isAuthScreen) {
     return <Navigate to='/' replace />
   }
 
@@ -22,7 +29,7 @@ export function PublicLayout() {
   return (
     <div
       className={
-        isHome
+        isHome || isPgDirectory
           ? "relative overflow-hidden bg-[radial-gradient(1200px_circle_at_15%_5%,rgba(37,99,235,0.16),transparent_55%),radial-gradient(900px_circle_at_85%_15%,rgba(16,185,129,0.12),transparent_52%),radial-gradient(700px_circle_at_55%_95%,rgba(168,85,247,0.10),transparent_55%),linear-gradient(180deg,rgba(255,255,255,1),rgba(248,250,252,1))]"
           : "flex h-screen flex-col overflow-hidden"
       }
@@ -35,11 +42,11 @@ export function PublicLayout() {
         </>
       ) : null}
 
-      <div className={isHome ? 'relative' : 'flex min-h-0 flex-1 flex-col'}>
+      <div className={isHome || isPgDirectory ? 'relative' : 'flex min-h-0 flex-1 flex-col'}>
         <PublicHeader />
 
-        <div className={isHome ? undefined : 'min-h-0 flex-1 overflow-y-auto'}>
-          <Outlet />
+        <div className={isHome || isPgDirectory ? undefined : 'min-h-0 flex-1 overflow-y-auto'}>
+          {children ?? <Outlet />}
           {!isAuthScreen && <AppFooter />}
         </div>
       </div>

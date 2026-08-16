@@ -59,6 +59,7 @@ export function PublicHeader({ className }: PublicHeaderProps) {
   const links = useMemo(
     () => [
       { title: 'Home', href: '/home', isActive: location.pathname === '/home' },
+      { title: 'Find PG', href: '/pg-directory', isActive: location.pathname.startsWith('/pg-directory') },
       { title: 'Subscriptions', href: '/subscriptions', isActive: location.pathname === '/subscriptions' },
       { title: 'FAQ', href: '/faq', isActive: location.pathname === '/faq' },
       { title: 'Contact Us', href: '/contact', isActive: location.pathname === '/contact' },
@@ -80,8 +81,8 @@ export function PublicHeader({ className }: PublicHeaderProps) {
     >
       <div className='container mx-auto flex h-full max-w-6xl items-center gap-3 px-4'>
         <Link to='/home' className='flex items-center gap-2 text-base font-semibold'>
-          <Logo className='size-15' alt='IPMS' />
-          <span className='hidden sm:inline'>IPMS</span>
+          <Logo className='size-15' alt='IPGM' />
+          <span className='hidden sm:inline'>IPGM</span>
         </Link>
 
         <div className='mx-auto hidden items-center space-x-4 lg:flex xl:space-x-6'>

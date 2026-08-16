@@ -1,4 +1,5 @@
 import { PageHeader } from '@/components/form/page-header'
+import { Seo, breadcrumbSchema } from '@/components/seo'
 
 import addAdvanceImg from '@/assets/faq-helper-images/add-advance.jpeg'
 import addRefundImg from '@/assets/faq-helper-images/add-refund.jpeg'
@@ -67,6 +68,14 @@ const HELPER_GUIDES: HelperGuide[] = [
 
 export function FaqScreen() {
   return (
+    <>
+    <Seo
+      title='FAQ — Frequently Asked Questions'
+      description='Find answers to common questions about IPGM — PG management, co-living spaces, subscriptions, tenant management, and more.'
+      keywords={['IPGM FAQ', 'frequently asked questions', 'PG management help', 'co-living FAQ']}
+      canonical='/faq'
+      schema={breadcrumbSchema([{ name: 'Home', url: '/home' }, { name: 'FAQ', url: '/faq' }])}
+    />
     <div className='legal-page'>
       <div className='container mx-auto max-w-6xl px-4 py-4'>
         <div className='mx-auto max-w-5xl'>
@@ -126,5 +135,6 @@ export function FaqScreen() {
         </div>
       </div>
     </div>
+    </>
   )
 }

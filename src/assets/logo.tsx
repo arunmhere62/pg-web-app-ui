@@ -6,7 +6,7 @@ export function Logo({ className, alt, ...props }: React.ComponentProps<'img'>) 
   return (
     <img
       src={mainLogo}
-      alt={alt ?? 'IPMS'}
+      alt={alt ?? 'IPGM'}
       className={cn('size-16 object-contain', className)}
       {...props}
     />

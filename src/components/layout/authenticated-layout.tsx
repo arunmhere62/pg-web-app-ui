@@ -41,7 +41,9 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
     (s) => (s as any).pgLocations?.selectedPGLocationId
   ) as number | null
 
-  const { data: pgLocationsResponse } = useGetPGLocationsQuery(undefined)
+  const { data: pgLocationsResponse } = useGetPGLocationsQuery(undefined, {
+    skip: !accessToken || !isOwner,
+  })
 
   const pgLocations: PGLocation[] = Array.isArray(
     (pgLocationsResponse as any)?.data

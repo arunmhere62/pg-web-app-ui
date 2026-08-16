@@ -1,4 +1,5 @@
 import { PageHeader } from '@/components/form/page-header'
+import { Seo, breadcrumbSchema } from '@/components/seo'
 
 function SectionHeader({ title }: { title: string }) {
   return (
@@ -21,6 +22,14 @@ function ServiceCard({ title, items }: { title: string; items: string[] }) {
 
 export function SoftwareServicesScreen() {
   return (
+    <>
+    <Seo
+      title='Software Services'
+      description='IPGM offers comprehensive software services for PG and co-living management — tenant management, rent tracking, expense management, CRM, WhatsApp messaging, and more.'
+      keywords={['PG management software', 'co-living software', 'rental management system', 'tenant management software', 'IPGM services']}
+      canonical='/software-services'
+      schema={breadcrumbSchema([{ name: 'Home', url: '/home' }, { name: 'Software Services', url: '/software-services' }])}
+    />
     <div className='legal-page'>
       <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
         <div className='mx-auto max-w-3xl'>
@@ -193,5 +202,6 @@ export function SoftwareServicesScreen() {
         </div>
       </div>
     </div>
+    </>
   )
 }

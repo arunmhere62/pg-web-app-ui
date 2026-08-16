@@ -23,9 +23,9 @@ export function AppTitle() {
               onClick={() => setOpenMobile(false)}
               className='flex flex-1 items-center gap-2 text-start text-sm leading-tight'
             >
-              <Logo className='size-8' alt='IPMS' />
+              <Logo className='size-8' alt='IPGM' />
               <span className='grid'>
-                <span className='truncate font-bold'>IPMS</span>
+                <span className='truncate font-bold'>IPGM</span>
                 <span className='truncate text-xs'>Indian PG Management System</span>
               </span>
             </Link>

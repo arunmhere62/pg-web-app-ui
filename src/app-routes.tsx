@@ -23,6 +23,9 @@ import { PGDetailsScreen } from '@/screens/pg-locations/PGDetailsScreen'
 import { PGLocationsScreen } from '@/screens/pg-locations/PGLocationsScreen'
 import { AboutUsScreen } from '@/screens/public/AboutUsScreen'
 import { ContactUsScreen } from '@/screens/public/ContactUsScreen'
+import { PgDirectoryScreen } from '@/screens/public/PgDirectoryScreen'
+import { PgDetailsScreen } from '@/screens/public/PgDetailsScreen'
+import { PgLocationScreen } from '@/screens/public/PgLocationScreen'
 import { PrivacyScreen } from '@/screens/public/PrivacyScreen'
 import { RefundPolicyScreen } from '@/screens/public/RefundPolicyScreen'
 import { SoftwareServicesScreen } from '@/screens/public/SoftwareServicesScreen'
@@ -45,7 +48,7 @@ import { TicketsScreen } from '@/screens/tickets/TicketsScreen'
 import { VisitorDetailsScreen } from '@/screens/visitors/VisitorDetailsScreen'
 import { VisitorFormScreen } from '@/screens/visitors/VisitorFormScreen'
 import { VisitorsScreen } from '@/screens/visitors/VisitorsScreen'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
 import { PublicLayout } from '@/components/layout/public-layout'
 import { TenantLayout } from '@/features/tenant/components/TenantLayout'
@@ -130,6 +133,10 @@ export function AppRoutes() {
         <Route path='/contact' element={<ContactUsScreen />} />
         <Route path='/software-services' element={<SoftwareServicesScreen />} />
         <Route path='/subscriptions' element={<SubscriptionsScreen />} />
+        {/* Public PG Directory — no login required */}
+        <Route path='/pg-directory' element={<PgDirectoryScreen />} />
+        <Route path='/pg-directory/:id' element={<PgDetailsScreen />} />
+        {/* Location-based landing pages handled by catch-all below */}
       </Route>
       {/* Tenant routes - for tenant portal */}
       <Route element={<TenantLayout />}>
@@ -140,7 +147,32 @@ export function AppRoutes() {
         <Route path='/tenant-dashboard/tickets' element={<TenantTicketsScreen />} />
         <Route path='/tenant-dashboard/settings' element={<TenantSettingsScreen />} />
       </Route>
-      <Route path='*' element={<Navigate to='/login' replace />} />
+      <Route path='*' element={<SmartCatchAll />} />
     </Routes>
   )
+}
+
+/**
+ * SmartCatchAll — handles /pg-in-:citySlug/:areaSlug URLs (React Router v6
+ * doesn't support inline params like /pg-in-:citySlug, so we parse manually).
+ * Falls back to /login redirect for all other unknown routes.
+ */
+function SmartCatchAll() {
+  const location = useLocation()
+  const path = location.pathname
+
+  // Match /pg-in-<citySlug> or /pg-in-<citySlug>/<areaSlug>
+  if (path.startsWith('/pg-in-')) {
+    const rest = path.slice('/pg-in-'.length) // e.g. "chennai" or "chennai/velacheri"
+    const [citySlug, areaSlug] = rest.split('/')
+    if (citySlug) {
+      return (
+        <PublicLayout>
+          <PgLocationScreen key={`${citySlug}/${areaSlug ?? ''}`} citySlug={citySlug} areaSlug={areaSlug} />
+        </PublicLayout>
+      )
+    }
+  }
+
+  return <Navigate to='/login' replace />
 }
