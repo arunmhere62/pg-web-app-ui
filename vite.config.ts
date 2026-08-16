@@ -60,8 +60,10 @@ export default defineConfig({
           'ui-vendor': ['lucide-react', 'class-variance-authority', 'clsx', 'tailwind-merge'],
           // State management & data
           'data-vendor': ['@reduxjs/toolkit', 'react-redux', 'react-helmet-async'],
-          // Form & utilities
-          'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod', 'date-fns', 'sonner'],
+          // Form libraries (only loaded on authenticated form screens)
+          'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
+          // Utilities
+          'util-vendor': ['date-fns', 'sonner'],
         },
       },
     },
