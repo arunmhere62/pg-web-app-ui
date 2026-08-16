@@ -32,7 +32,7 @@ const DEFAULT_KEYWORDS = [
   'rental management', 'tenant management', 'PG in Bangalore', 'PG in Chennai',
   'co-living space', 'paying guest', 'PG directory India', 'IPGM',
 ]
-const DEFAULT_OG_IMAGE = '/og-image.png'
+const DEFAULT_OG_IMAGE = '/og-image.webp'
 
 // ─── Component ───
 
@@ -124,7 +124,7 @@ export const SITE_CONFIG = {
   name: SITE_NAME,
   url: SITE_URL,
   description: DEFAULT_DESCRIPTION,
-  logo: `${SITE_URL}/logo.png`,
+  logo: `${SITE_URL}/logo.webp`,
   ogImage: `${SITE_URL}${DEFAULT_OG_IMAGE}`,
 }
 
@@ -136,7 +136,7 @@ export function organizationSchema() {
     name: 'Satz Techno Solutions',
     alternateName: 'IPGM — Indian PG Management System',
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}/logo.webp`,
     description: DEFAULT_DESCRIPTION,
     foundingDate: '2024',
     founders: [{

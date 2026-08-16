@@ -1,6 +1,6 @@
 import type React from 'react'
 import { cn } from '@/lib/utils'
-import mainLogo from '@/assets/main-logo.png'
+import mainLogo from '@/assets/main-logo.webp'
 
 export function Logo({ className, alt, ...props }: React.ComponentProps<'img'>) {
   return (
