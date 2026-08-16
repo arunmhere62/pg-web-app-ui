@@ -217,8 +217,13 @@ def tagPreviousImage() {
     ).trim()
 
     if (currentImage) {
-        sh "docker tag ${currentImage} ${env.APP_IMAGE}:previous"
-        echo "Tagged previous image: ${currentImage} -> ${env.APP_IMAGE}:previous"
+        def imageExists = sh(returnStatus: true, script: "docker image inspect ${currentImage} >/dev/null 2>&1")
+        if (imageExists == 0) {
+            sh "docker tag ${currentImage} ${env.APP_IMAGE}:previous"
+            echo "Tagged previous image: ${currentImage} -> ${env.APP_IMAGE}:previous"
+        } else {
+            echo "WARNING: Previous image ${currentImage} no longer exists on disk (pruned). Skipping previous-image tag."
+        }
     } else {
         echo "WARNING: Could not determine image of running container ${runningContainer}."
     }
