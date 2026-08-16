@@ -23,6 +23,7 @@ interface SeoProps {
 // ─── Constants ───
 
 const SITE_NAME = 'IPGM — Indian PG Management System'
+const SITE_SHORT_NAME = 'IPGM'
 const SITE_URL = 'https://www.indianpgmanagement.com'
 const DEFAULT_DESCRIPTION =
   'IPGM (Indian PG Management System) is a comprehensive platform for managing PG accommodations, co-living spaces, and hostels. Find verified PGs with AC, WiFi, food, and more across India.'
@@ -82,7 +83,7 @@ export function Seo({
 
       {/* Open Graph / Facebook */}
       <meta property='og:type' content={type} />
-      <meta property='og:site_name' content={SITE_NAME} />
+      <meta property='og:site_name' content={SITE_SHORT_NAME} />
       <meta property='og:title' content={fullTitle} />
       <meta property='og:description' content={description} />
       {canonicalUrl && <meta property='og:url' content={canonicalUrl} />}
