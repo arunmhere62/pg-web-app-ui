@@ -73,7 +73,7 @@ function OtpInput({ value, onChange, length = 4 }: OtpInputProps) {
           value={localValue[index] || ''}
           onChange={(e) => handleChange(index, e.target.value)}
           onKeyDown={(e) => handleKeyDown(index, e)}
-          className='h-12 w-12 rounded-lg border border-slate-200 bg-white text-center text-xl font-semibold outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
+          className='h-14 w-14 rounded-xl border border-slate-200 bg-white text-center text-2xl font-semibold outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
         />
       ))}
     </div>
@@ -213,11 +213,16 @@ export function TenantLoginScreen() {
                           Phone Number
                         </FormLabel>
                         <FormControl className='w-full'>
-                          <Input
-                            placeholder='Enter 10 digit number'
-                            {...field}
-                            className='h-10 rounded-lg border-slate-200 focus:border-slate-400'
-                          />
+                          <div className='flex items-center gap-2'>
+                            <div className='flex h-10 items-center justify-center rounded-lg border border-r-0 border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-500'>
+                              +91
+                            </div>
+                            <Input
+                              placeholder='Enter 10 digit number'
+                              {...field}
+                              className='h-10 rounded-lg border-slate-200 focus:border-slate-400'
+                            />
+                          </div>
                         </FormControl>
                         <FormMessage className='text-left' />
                       </FormItem>

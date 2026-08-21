@@ -70,7 +70,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 
   // Early returns after all hooks are called
   if (!accessToken) {
-    return <Navigate to='/login' replace state={{ from: location.pathname }} />
+    return <Navigate to='/home' replace state={{ from: location.pathname }} />
   }
 
   // Route protection: tenants cannot access owner routes
@@ -80,7 +80,7 @@ export function AuthenticatedLayout({ children }: AuthenticatedLayoutProps) {
 
   // Owners must be authenticated to access owner routes
   if (!isOwner) {
-    return <Navigate to='/login' replace state={{ from: location.pathname }} />
+    return <Navigate to='/home' replace state={{ from: location.pathname }} />
   }
 
   const defaultOpen = getCookie('sidebar_state') !== 'false'

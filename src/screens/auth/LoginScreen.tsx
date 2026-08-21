@@ -148,7 +148,7 @@ function OtpInput({ value, onChange, length = 6 }: OtpInputProps) {
 
           onKeyDown={(e) => handleKeyDown(index, e)}
 
-          className='h-12 w-12 rounded-lg border border-slate-200 bg-white text-center text-xl font-semibold outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
+          className='h-14 w-14 rounded-xl border border-slate-200 bg-white text-center text-2xl font-semibold outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
 
         />
 
@@ -263,7 +263,7 @@ export function LoginScreen() {
 
 
 
-  const fromPath = useMemo(() => location?.state?.from || '/', [location])
+  const fromPath = useMemo(() => location?.state?.from || '/dashboard', [location])
 
 
 
@@ -414,15 +414,25 @@ export function LoginScreen() {
 
                         <FormControl className='w-full'>
 
-                          <Input
+                          <div className='flex items-center gap-2'>
 
-                            placeholder='Enter 10 digit number'
+                            <div className='flex h-10 items-center justify-center rounded-lg border border-r-0 border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-500'>
 
-                            {...field}
+                              +91
 
-                            className='h-10 rounded-lg border-slate-200 focus:border-slate-400'
+                            </div>
 
-                          />
+                            <Input
+
+                              placeholder='Enter 10 digit number'
+
+                              {...field}
+
+                              className='h-10 rounded-lg border-slate-200 focus:border-slate-400'
+
+                            />
+
+                          </div>
 
                         </FormControl>
 

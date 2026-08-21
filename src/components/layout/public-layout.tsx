@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { getCookie } from '@/lib/cookies'
 import { PublicHeader } from '@/components/layout/public-header'
 import { AppFooter } from '@/components/layout/app-footer'
+import { LeadCapturePopup } from '@/components/lead-capture-popup'
 
 type PublicLayoutProps = {
   children?: React.ReactNode
@@ -10,16 +11,16 @@ type PublicLayoutProps = {
 export function PublicLayout({ children }: PublicLayoutProps) {
   const location = useLocation()
   const isEmbedded = new URLSearchParams(location.search).get('embed') === '1'
-  const isHome = location.pathname === '/home'
+  const isHome = location.pathname === '/' || location.pathname === '/home'
   const isPgDirectory = location.pathname.startsWith('/pg-directory') || location.pathname.startsWith('/pg-in-')
   const isAuthScreen = location.pathname === '/login' || location.pathname === '/signup' || location.pathname === '/owner-login' || location.pathname === '/tenant-login'
 
   const accessToken = getCookie('access_token')
 
-  // PG Directory and location pages are accessible to everyone (logged in or not)
+  // Home, PG Directory, location pages, and auth screens are accessible to everyone (logged in or not)
   // Auth screens are accessible even with a stale token (avoids redirect loop)
-  if (!isEmbedded && accessToken && !isPgDirectory && !isAuthScreen) {
-    return <Navigate to='/' replace />
+  if (!isEmbedded && accessToken && !isHome && !isPgDirectory && !isAuthScreen) {
+    return <Navigate to='/dashboard' replace />
   }
 
   if (isEmbedded) {
@@ -50,6 +51,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           {!isAuthScreen && <AppFooter />}
         </div>
       </div>
+      {!isAuthScreen && <LeadCapturePopup />}
     </div>
   )
 }

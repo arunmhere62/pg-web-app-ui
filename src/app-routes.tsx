@@ -56,6 +56,8 @@ const RefundPolicyScreen = lazy(() => import('@/screens/public/RefundPolicyScree
 const SoftwareServicesScreen = lazy(() => import('@/screens/public/SoftwareServicesScreen').then(m => ({ default: m.SoftwareServicesScreen })))
 const TermsScreen = lazy(() => import('@/screens/public/TermsScreen').then(m => ({ default: m.TermsScreen })))
 const SubscriptionsScreen = lazy(() => import('@/screens/subscription/SubscriptionsScreen').then(m => ({ default: m.SubscriptionsScreen })))
+const BlogListScreen = lazy(() => import('@/screens/public/BlogListScreen').then(m => ({ default: m.BlogListScreen })))
+const BlogPostScreen = lazy(() => import('@/screens/public/BlogPostScreen').then(m => ({ default: m.BlogPostScreen })))
 
 // Tenant portal
 const TenantDashboardScreen = lazy(() => import('@/features/tenant/screens/TenantDashboardScreen').then(m => ({ default: m.TenantDashboardScreen })))
@@ -79,9 +81,9 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<RouteLoader />}>
       <Routes>
-        {/* Authenticated routes first - includes hybrid policy pages */}
+        {/* Authenticated routes - all under /dashboard prefix */}
         <Route element={<AuthenticatedLayout />}>
-          <Route path='/' element={<HomePage />} />
+          <Route path='/dashboard' element={<HomePage />} />
           <Route path='/quick-setup' element={<QuickSetupScreen />} />
           <Route path='/pg-locations' element={<PGLocationsScreen />} />
           <Route path='/pg-locations/:id' element={<PGDetailsScreen />} />
@@ -143,6 +145,7 @@ export function AppRoutes() {
         </Route>
         {/* Public routes - for logged-out users */}
         <Route element={<PublicLayout />}>
+          <Route path='/' element={<PublicHome />} />
           <Route path='/home' element={<PublicHome />} />
           <Route path='/login' element={<RoleSelectionScreen />} />
           <Route path='/owner-login' element={<LoginScreen />} />
@@ -155,6 +158,8 @@ export function AppRoutes() {
           <Route path='/refund-policy' element={<RefundPolicyScreen />} />
           <Route path='/contact' element={<ContactUsScreen />} />
           <Route path='/software-services' element={<SoftwareServicesScreen />} />
+          <Route path='/blog' element={<BlogListScreen />} />
+          <Route path='/blog/:slug' element={<BlogPostScreen />} />
           <Route path='/subscriptions' element={<SubscriptionsScreen />} />
           {/* Public PG Directory — no login required */}
           <Route path='/pg-directory' element={<PgDirectoryScreen />} />
@@ -198,5 +203,5 @@ function SmartCatchAll() {
     }
   }
 
-  return <Navigate to='/login' replace />
+  return <Navigate to='/' replace />
 }

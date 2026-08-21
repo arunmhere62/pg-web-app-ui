@@ -12,6 +12,7 @@ const LEGAL_LINKS = [
   { label: 'Cancellation & Refund', to: '/refund-policy' },
   { label: 'Contact Us', to: '/contact' },
   { label: 'FAQ', to: '/faq' },
+  { label: 'Blog', to: '/blog' },
   { label: 'Pricing', to: '/subscriptions' },
 ]
 
@@ -23,7 +24,7 @@ export function AppFooter() {
         <div className='grid gap-8 sm:grid-cols-3'>
           {/* Brand + contact */}
           <div className='space-y-3'>
-            <Link to='/home' className='flex items-center gap-2 text-sm font-semibold text-foreground'>
+            <Link to='/' className='flex items-center gap-2 text-sm font-semibold text-foreground'>
               <Logo className='size-6' alt='IPGM' />
               <span>IPGM</span>
             </Link>

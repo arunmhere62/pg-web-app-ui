@@ -18,8 +18,13 @@ export default defineConfig({
       // absolute URL. Override with SITEMAP_API_URL env var if needed.
       apiUrl: process.env.SITEMAP_API_URL || 'https://mobapi.indianpgmanagement.com',
       routes: [
-        { path: '/home', priority: 1.0, changefreq: 'daily' },
+        { path: '/', priority: 1.0, changefreq: 'daily' },
         { path: '/pg-directory', priority: 0.9, changefreq: 'daily' },
+        { path: '/blog', priority: 0.8, changefreq: 'weekly' },
+        { path: '/blog/how-to-manage-pg-tenants-efficiently', priority: 0.7, changefreq: 'monthly' },
+        { path: '/blog/pg-rent-collection-tips', priority: 0.7, changefreq: 'monthly' },
+        { path: '/blog/best-pg-management-software-india', priority: 0.7, changefreq: 'monthly' },
+        { path: '/blog/hostel-management-system-guide', priority: 0.7, changefreq: 'monthly' },
         { path: '/subscriptions', priority: 0.8, changefreq: 'weekly' },
         { path: '/about', priority: 0.7, changefreq: 'monthly' },
         { path: '/contact', priority: 0.7, changefreq: 'monthly' },

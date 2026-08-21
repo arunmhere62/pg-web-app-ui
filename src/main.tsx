@@ -7,6 +7,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from '@/context/theme-provider'
 import { AppRoutes } from './app-routes'
+import { ScrollToTop } from '@/components/scroll-to-top'
 import { persistor, store } from '@/store/store'
 // Styles
 import './styles/index.css'
@@ -22,6 +23,7 @@ if (!rootElement.innerHTML) {
           <PersistGate loading={null} persistor={persistor}>
             <ThemeProvider>
               <BrowserRouter>
+                <ScrollToTop />
                 <AppRoutes />
               </BrowserRouter>
               <Toaster position='top-center' />

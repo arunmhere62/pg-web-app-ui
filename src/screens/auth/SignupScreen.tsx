@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useState, useRef } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -24,6 +24,63 @@ import {
   useLazyGetRequiredLegalDocumentsStatusQuery,
 } from '@/services/legalDocumentsApi'
 
+interface OtpInputProps {
+  value: string
+  onChange: (value: string) => void
+  length?: number
+}
+
+function OtpInput({ value, onChange, length = 4 }: OtpInputProps) {
+  const [localValue, setLocalValue] = useState(value.split('').concat(Array(length).fill('')).slice(0, length))
+  const inputsRef = useRef<(HTMLInputElement | null)[]>([])
+
+  const handleChange = useCallback((index: number, digit: string) => {
+    if (!/^\d*$/.test(digit)) return
+    const newLocalValue = [...localValue]
+    newLocalValue[index] = digit.slice(-1)
+    setLocalValue(newLocalValue)
+    onChange(newLocalValue.join(''))
+    if (digit && index < length - 1) {
+      inputsRef.current[index + 1]?.focus()
+    }
+  }, [localValue, length, onChange])
+
+  const handleKeyDown = useCallback((index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !localValue[index] && index > 0) {
+      inputsRef.current[index - 1]?.focus()
+    }
+  }, [localValue])
+
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, length)
+    const newLocalValue = pasted.split('').concat(Array(length).fill('')).slice(0, length)
+    setLocalValue(newLocalValue)
+    onChange(newLocalValue.join(''))
+    const focusIndex = Math.min(pasted.length, length - 1)
+    inputsRef.current[focusIndex]?.focus()
+  }, [length, onChange])
+
+  return (
+    <div className='flex justify-center gap-2' onPaste={handlePaste}>
+      {Array.from({ length }).map((_, index) => (
+        <input
+          key={index}
+          ref={(el) => { inputsRef.current[index] = el }}
+          type='text'
+          inputMode='numeric'
+          pattern='[0-9]'
+          maxLength={1}
+          value={localValue[index] || ''}
+          onChange={(e) => handleChange(index, e.target.value)}
+          onKeyDown={(e) => handleKeyDown(index, e)}
+          className='h-14 w-14 rounded-xl border border-slate-200 bg-white text-center text-2xl font-semibold outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-100'
+        />
+      ))}
+    </div>
+  )
+}
+
 const schema = z.object({
   organizationName: z.string().optional(),
   name: z.string().optional(),
@@ -38,6 +95,7 @@ type FormValues = z.infer<typeof schema>
 
 export function SignupScreen() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
 
   const [otp, setOtp] = useState('')
   const [fullPhone, setFullPhone] = useState('')
@@ -57,7 +115,7 @@ export function SignupScreen() {
     defaultValues: {
       organizationName: '',
       name: '',
-      phone: '',
+      phone: searchParams.get('phone') || localStorage.getItem('ipgm_lead_phone') || '',
       pgName: '',
       rentCycleType: 'CALENDAR',
       rentCycleStart: 1,
@@ -235,208 +293,257 @@ export function SignupScreen() {
     <>
       <Seo title='Sign Up' description='Create an IPGM account to start managing your PG or co-living space.' canonical='/signup' noindex />
       <div className='flex h-full w-full flex-col overflow-hidden lg:flex-row'>
-      {/* Form - On top for mobile, right side for desktop */}
-      <div className='order-1 flex h-full w-full items-center justify-center overflow-y-auto bg-white lg:order-2 lg:w-1/2'>
-        <div className='w-full max-w-[420px] px-8 py-12'>
-          <h1 className='mb-2 text-center text-3xl font-bold text-slate-900'>
-            {phoneVerified ? 'Setup your PG' : 'Create Account'}
-          </h1>
-          <p className='mb-8 text-center text-slate-500'>
-            {phoneVerified
-              ? 'Complete setup to get started'
-              : 'Verify your phone number to continue'}
-          </p>
+        {/* Form Section */}
+        <div className='order-1 flex h-full w-full items-center justify-center overflow-y-auto bg-white lg:order-2 lg:w-1/2'>
+          <div className='w-full max-w-[380px] px-6 py-8'>
 
-          <div>
-            <Form {...form}>
-              <form className='space-y-5'>
-                {!phoneVerified ? (
-                  <>
+            {/* Phase 1: Phone number entry */}
+            {!phoneVerified && !otpSent && (
+              <>
+                <h1 className='mb-1 text-center text-2xl font-bold text-slate-900'>
+                  Create Account
+                </h1>
+                <p className='mb-6 text-center text-sm text-slate-500'>
+                  Verify your phone number to get started
+                </p>
+
+                <Form {...form}>
+                  <form className='space-y-5'>
                     <FormField
                       control={form.control}
                       name='phone'
                       render={({ field }) => (
                         <FormItem className='flex flex-col'>
-                          <FormLabel className='text-left text-sm font-medium text-slate-700'>Phone Number</FormLabel>
+                          <FormLabel className='text-left text-sm font-medium text-slate-700'>
+                            Phone Number
+                          </FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder='Enter 10 digit number'
-                              {...field}
-                              disabled={otpSent}
-                              onChange={(e) => {
-                                field.onChange(e.target.value)
-                                if (otpSent) resetPhoneFlow()
-                              }}
-                              className='h-12 rounded-lg border-slate-200 focus:border-slate-400'
-                            />
+                            <div className='flex items-center gap-2'>
+                              <div className='flex h-10 items-center justify-center rounded-lg border border-r-0 border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-500'>
+                                +91
+                              </div>
+                              <Input
+                                placeholder='Enter 10 digit number'
+                                {...field}
+                                className='h-10 rounded-lg border-slate-200 focus:border-slate-400'
+                                onChange={(e) => {
+                                  field.onChange(e.target.value)
+                                }}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage className='text-left' />
                         </FormItem>
                       )}
                     />
 
-                    {!otpSent ? (
-                      <Button
-                        type='button'
-                        disabled={sending || !String(phoneValue || '').trim()}
-                        onClick={() => void onSendOtp()}
-                        className='h-12 w-full rounded-full bg-blue-600 text-base font-medium hover:bg-blue-700'
-                      >
-                        {sending ? 'Sending...' : 'Send OTP'}
-                      </Button>
-                    ) : (
-                      <>
-                        <div>
-                          <label className='mb-2 block text-sm font-medium text-slate-700'>Verification Code</label>
-                          <Input
-                            placeholder='Enter 4-digit OTP'
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            maxLength={4}
-                            className='h-12 rounded-lg border-slate-200 text-center text-xl tracking-widest focus:border-slate-400'
-                          />
-                          <p className='mt-2 text-xs text-slate-500'>Sent to {fullPhone}</p>
-                        </div>
-                        <div className='flex gap-3'>
-                          <Button
-                            type='button'
-                            onClick={onVerifyOtp}
-                            disabled={verifying}
-                            className='h-12 flex-1 rounded-full bg-blue-600 text-base font-medium hover:bg-blue-700'
-                          >
-                            {verifying ? 'Verifying...' : 'Verify'}
-                          </Button>
-                          <Button
-                            type='button'
-                            variant='outline'
-                            onClick={() => {
-                              setOtpSent(false)
-                              setOtp('')
-                            }}
-                            className='h-12 flex-1 rounded-lg border-slate-200'
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <div className='flex items-center justify-between gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3'>
-                    <div className='text-sm font-medium text-emerald-700'>Phone Verified</div>
-                    <Button type='button' variant='ghost' size='sm' className='h-8 px-2 text-emerald-700 hover:text-emerald-800' onClick={resetPhoneFlow}>
-                      Change
+                    <Button
+                      type='button'
+                      disabled={sending || !String(phoneValue || '').trim()}
+                      onClick={() => void onSendOtp()}
+                      className='h-12 w-full rounded-full bg-blue-600 text-base font-medium hover:bg-blue-700'
+                    >
+                      {sending ? 'Sending...' : 'Send OTP'}
                     </Button>
+
+                    <div className='flex items-center gap-4 py-2'>
+                      <div className='h-px flex-1 bg-slate-200' />
+                      <span className='text-xs text-slate-400'>or</span>
+                      <div className='h-px flex-1 bg-slate-200' />
+                    </div>
+
+                    <Button
+                      type='button'
+                      variant='outline'
+                      onClick={() => navigate('/login')}
+                      className='h-10 w-full rounded-lg border-slate-200 text-sm font-normal'
+                    >
+                      Already have an account? Login
+                    </Button>
+                  </form>
+                </Form>
+              </>
+            )}
+
+            {/* Phase 2: OTP verification */}
+            {!phoneVerified && otpSent && (
+              <>
+                <h1 className='mb-1 text-center text-2xl font-bold text-slate-900'>
+                  Verify OTP
+                </h1>
+                <p className='mb-6 text-center text-sm text-slate-500'>
+                  Enter the code sent to {fullPhone}
+                </p>
+
+                <div className='space-y-5'>
+                  <div className='flex flex-col items-center space-y-4'>
+                    <label className='text-center text-sm font-medium text-slate-600'>
+                      Enter 4-digit verification code
+                    </label>
+                    <OtpInput
+                      value={otp}
+                      onChange={(value) => setOtp(value)}
+                      length={4}
+                    />
                   </div>
-                )}
 
-                {phoneVerified ? (
-                  <>
-                    <div className='rounded-lg border border-blue-100 bg-blue-50 px-4 py-3'>
-                      <div className='text-center text-sm font-semibold text-blue-900'>Quick setup</div>
-                      <div className='mt-0.5 text-center text-xs text-blue-700'>Just a few details to get started.</div>
-                    </div>
+                  <Button
+                    type='button'
+                    onClick={onVerifyOtp}
+                    disabled={verifying || otp.length !== 4}
+                    className='h-12 w-full rounded-full bg-blue-600 text-base font-medium hover:bg-blue-700'
+                  >
+                    {verifying ? 'Verifying...' : 'Verify'}
+                  </Button>
 
-                    <div className='space-y-4'>
+                  <div className='flex items-center justify-center gap-2 pt-2'>
+                    <span className='text-xs text-slate-500'>Didn&apos;t receive code?</span>
+                    <button
+                      type='button'
+                      onClick={() => {
+                        onSendOtp()
+                      }}
+                      disabled={sending}
+                      className='text-xs font-medium text-blue-600 hover:text-blue-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                      {sending ? 'Sending...' : 'Resend'}
+                    </button>
+                  </div>
+
+                  <Button
+                    type='button'
+                    onClick={() => {
+                      setOtpSent(false)
+                      setOtp('')
+                    }}
+                    className='h-10 w-full gap-2 rounded-full border-2 border-blue-600 bg-white text-xs font-medium text-blue-600 shadow-none hover:bg-blue-50'
+                  >
+                    <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
+                    </svg>
+                    Change phone number
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {/* Phase 3: Setup PG details after OTP verified */}
+            {phoneVerified && (
+              <>
+                <h1 className='mb-1 text-center text-2xl font-bold text-slate-900'>
+                  Setup your PG
+                </h1>
+                <p className='mb-6 text-center text-sm text-slate-500'>
+                  Complete setup to get started
+                </p>
+
+                <div className='mb-5 flex items-center justify-between gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3'>
+                  <div className='text-sm font-medium text-emerald-700'>Phone Verified</div>
+                  <Button type='button' variant='ghost' size='sm' className='h-8 px-2 text-emerald-700 hover:text-emerald-800' onClick={resetPhoneFlow}>
+                    Change
+                  </Button>
+                </div>
+
+                <Form {...form}>
+                  <form className='space-y-4'>
+                    <FormField
+                      control={form.control}
+                      name='pgName'
+                      render={({ field }) => (
+                        <FormItem className='flex flex-col'>
+                          <FormLabel className='text-left text-sm font-medium text-slate-700'>PG Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder='e.g., Green Valley PG' {...field} className='h-10 rounded-lg border-slate-200 focus:border-slate-400' />
+                          </FormControl>
+                          <FormMessage className='text-left' />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='name'
+                      render={({ field }) => (
+                        <FormItem className='flex flex-col'>
+                          <FormLabel className='text-left text-sm font-medium text-slate-700'>Your Full Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder='e.g., John Doe' {...field} className='h-10 rounded-lg border-slate-200 focus:border-slate-400' />
+                          </FormControl>
+                          <FormMessage className='text-left' />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name='rentCycleType'
+                      render={({ field }) => (
+                        <FormItem className='flex flex-col'>
+                          <FormLabel className='text-left text-sm font-medium text-slate-700'>Rent Cycle Type</FormLabel>
+                          <div className='mt-2 grid gap-3 sm:grid-cols-2'>
+                            <button
+                              type='button'
+                              className={
+                                'rounded-lg border px-4 py-3 text-left transition ' +
+                                ((field.value || 'CALENDAR') === 'CALENDAR'
+                                  ? 'border-blue-600 bg-blue-50'
+                                  : 'border-slate-200 bg-white hover:bg-slate-50')
+                              }
+                              onClick={() => {
+                                field.onChange('CALENDAR')
+                                form.setValue('rentCycleStart', 1)
+                                form.setValue('rentCycleEnd', 30)
+                              }}
+                            >
+                              <div className='text-sm font-semibold'>Calendar Month</div>
+                              <div className='mt-1 text-xs text-slate-500'>1st to 30th/31st</div>
+                            </button>
+                            <button
+                              type='button'
+                              className={
+                                'rounded-lg border px-4 py-3 text-left transition ' +
+                                ((field.value || 'CALENDAR') === 'MIDMONTH'
+                                  ? 'border-blue-600 bg-blue-50'
+                                  : 'border-slate-200 bg-white hover:bg-slate-50')
+                              }
+                              onClick={() => {
+                                field.onChange('MIDMONTH')
+                                form.setValue('rentCycleStart', 1)
+                                form.setValue('rentCycleEnd', 30)
+                              }}
+                            >
+                              <div className='text-sm font-semibold'>Check-in Based</div>
+                              <div className='mt-1 text-xs text-slate-500'>From tenant start date</div>
+                            </button>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+
+                    {(form.getValues('rentCycleType') || 'CALENDAR') === 'CALENDAR' ? (
                       <FormField
                         control={form.control}
-                        name='pgName'
+                        name='rentCycleEnd'
                         render={({ field }) => (
                           <FormItem className='flex flex-col'>
-                            <FormLabel className='text-left text-sm font-medium text-slate-700'>PG Name</FormLabel>
+                            <FormLabel className='text-left text-sm font-medium text-slate-700'>Rent Cycle End Day</FormLabel>
                             <FormControl>
-                              <Input placeholder='e.g., Green Valley PG' {...field} className='h-12 rounded-lg border-slate-200' />
+                              <Input
+                                placeholder='30'
+                                value={field.value == null ? '' : String(field.value)}
+                                onChange={(e) => {
+                                  const v = e.target.value
+                                  const n = v ? Number(v) : NaN
+                                  field.onChange(Number.isFinite(n) ? n : null)
+                                }}
+                                className='h-10 rounded-lg border-slate-200 focus:border-slate-400'
+                              />
                             </FormControl>
                             <FormMessage className='text-left' />
                           </FormItem>
                         )}
                       />
-
-                      <FormField
-                        control={form.control}
-                        name='name'
-                        render={({ field }) => (
-                          <FormItem className='flex flex-col'>
-                            <FormLabel className='text-left text-sm font-medium text-slate-700'>Your Full Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder='e.g., John Doe' {...field} className='h-12 rounded-lg border-slate-200' />
-                            </FormControl>
-                            <FormMessage className='text-left' />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name='rentCycleType'
-                        render={({ field }) => (
-                          <FormItem className='flex flex-col'>
-                            <FormLabel className='text-left text-sm font-medium text-slate-700'>Rent Cycle Type</FormLabel>
-                            <div className='mt-2 grid gap-3 sm:grid-cols-2'>
-                              <button
-                                type='button'
-                                className={
-                                  'rounded-lg border px-4 py-3 text-left transition ' +
-                                  ((field.value || 'CALENDAR') === 'CALENDAR'
-                                    ? 'border-blue-600 bg-blue-50'
-                                    : 'border-slate-200 bg-white hover:bg-slate-50')
-                                }
-                                onClick={() => {
-                                  field.onChange('CALENDAR')
-                                  form.setValue('rentCycleStart', 1)
-                                  form.setValue('rentCycleEnd', 30)
-                                }}
-                              >
-                                <div className='text-sm font-semibold'>Calendar Month</div>
-                                <div className='mt-1 text-xs text-slate-500'>1st to 30th/31st</div>
-                              </button>
-                              <button
-                                type='button'
-                                className={
-                                  'rounded-lg border px-4 py-3 text-left transition ' +
-                                  ((field.value || 'CALENDAR') === 'MIDMONTH'
-                                    ? 'border-blue-600 bg-blue-50'
-                                    : 'border-slate-200 bg-white hover:bg-slate-50')
-                                }
-                                onClick={() => {
-                                  field.onChange('MIDMONTH')
-                                  form.setValue('rentCycleStart', 1)
-                                  form.setValue('rentCycleEnd', 30)
-                                }}
-                              >
-                                <div className='text-sm font-semibold'>Check-in Based</div>
-                                <div className='mt-1 text-xs text-slate-500'>From tenant start date</div>
-                              </button>
-                            </div>
-                          </FormItem>
-                        )}
-                      />
-
-                      {(form.getValues('rentCycleType') || 'CALENDAR') === 'CALENDAR' ? (
-                        <FormField
-                          control={form.control}
-                          name='rentCycleEnd'
-                          render={({ field }) => (
-                            <FormItem className='flex flex-col'>
-                              <FormLabel className='text-left text-sm font-medium text-slate-700'>Rent Cycle End Day</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder='30'
-                                  value={field.value == null ? '' : String(field.value)}
-                                  onChange={(e) => {
-                                    const v = e.target.value
-                                    const n = v ? Number(v) : NaN
-                                    field.onChange(Number.isFinite(n) ? n : null)
-                                  }}
-                                  className='h-12 rounded-lg border-slate-200'
-                                />
-                              </FormControl>
-                              <FormMessage className='text-left' />
-                            </FormItem>
-                          )}
-                        />
-                      ) : null}
-                    </div>
+                    ) : null}
 
                     <div className='flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4'>
                       <Checkbox
@@ -477,51 +584,35 @@ export function SignupScreen() {
                       </label>
                     </div>
 
-                    <Button 
-                      type='button' 
-                      onClick={onSignup} 
+                    <Button
+                      type='button'
+                      onClick={onSignup}
                       disabled={!phoneVerified || signingUp}
                       className='h-12 w-full rounded-full bg-blue-600 text-base font-medium hover:bg-blue-700'
                     >
                       {signingUp ? 'Creating...' : 'Create Account'}
                     </Button>
-                  </>
-                ) : null}
+                  </form>
+                </Form>
+              </>
+            )}
+          </div>
+        </div>
 
-                <div className='flex items-center gap-4 py-2'>
-                  <div className='h-px flex-1 bg-slate-200' />
-                  <span className='text-xs text-slate-400'>or</span>
-                  <div className='h-px flex-1 bg-slate-200' />
-                </div>
-
-                <Button 
-                  type='button' 
-                  variant='outline' 
-                  onClick={() => navigate('/login')}
-                  className='h-12 w-full rounded-lg border-slate-200'
-                >
-                  Already have an account? Login
-                </Button>
-              </form>
-            </Form>
+        {/* Branding Section */}
+        <div className='order-2 hidden h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white lg:order-1 lg:flex lg:w-1/2'>
+          <div className='flex flex-col items-center justify-center p-12'>
+            <div className='mb-6 text-5xl'>🏠</div>
+            <h1 className='mb-3 text-3xl font-bold'>IPGM</h1>
+            <p className='text-center text-base text-white/80'>
+              Indian PG Management System
+            </p>
+            <div className='mt-8 text-xs text-white/60'>
+              Start managing your PG properties efficiently
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Branding - Hidden on mobile, left side on desktop */}
-      <div className='order-2 hidden h-full w-full flex-col items-center justify-center bg-gradient-to-br from-blue-600 via-blue-700 to-slate-900 text-white lg:order-1 lg:flex lg:w-1/2'>
-        <div className='flex flex-col items-center justify-center p-12'>
-          <div className='mb-8 text-6xl'>🏠</div>
-          <h1 className='mb-4 text-4xl font-bold'>IPGM</h1>
-          <p className='text-center text-lg text-white/80'>
-            Indian PG Management System
-          </p>
-          <div className='mt-12 text-sm text-white/60'>
-            Manage your PG properties efficiently
-          </div>
-        </div>
-      </div>
-    </div>
     </>
   )
 }

@@ -1,5 +1,5 @@
 import { PageHeader } from '@/components/form/page-header'
-import { Seo, breadcrumbSchema } from '@/components/seo'
+import { Seo, breadcrumbSchema, softwareApplicationSchema } from '@/components/seo'
 
 function SectionHeader({ title }: { title: string }) {
   return (
@@ -24,11 +24,19 @@ export function SoftwareServicesScreen() {
   return (
     <>
     <Seo
-      title='Software Services'
-      description='IPGM offers comprehensive software services for PG and co-living management — tenant management, rent tracking, expense management, CRM, WhatsApp messaging, and more.'
-      keywords={['PG management software', 'co-living software', 'rental management system', 'tenant management software', 'IPGM services']}
+      title='PG Management Software Services | Hostel & Co-living Software — IPGM'
+      description='IPGM offers comprehensive PG management software services — tenant management, rent tracking, room & bed allocation, WhatsApp/SMS reminders, expense tracking, invoices, and multi-PG management. Cloud-based SaaS for PG owners in India.'
+      keywords={[
+        'PG management software', 'hostel management system', 'co-living software',
+        'rental management system', 'tenant management software', 'IPGM services',
+        'PG rent management software', 'best PG software India', 'cloud PG management',
+        'SaaS PG management', 'property management software India',
+      ]}
       canonical='/software-services'
-      schema={breadcrumbSchema([{ name: 'Home', url: '/home' }, { name: 'Software Services', url: '/software-services' }])}
+      schema={[
+        breadcrumbSchema([{ name: 'Home', url: '/home' }, { name: 'Software Services', url: '/software-services' }]),
+        softwareApplicationSchema(),
+      ]}
     />
     <div className='legal-page'>
       <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>

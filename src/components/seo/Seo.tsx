@@ -302,3 +302,109 @@ export function contactPageSchema() {
     },
   }
 }
+
+/** SoftwareApplication schema — critical for ranking when users search 'PG management software' or 'hostel management system' */
+export function softwareApplicationSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'IPGM — Indian PG Management System',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Android, iOS, Web',
+    description:
+      'PG management software for managing tenants, rooms, rent payments, deposits, expenses, and daily operations for paying guest hostels and PG accommodations in India.',
+    url: SITE_URL,
+    downloadUrl: `${SITE_URL}/home`,
+    screenshot: `${SITE_URL}/og-image.webp`,
+    softwareVersion: '2.0',
+    datePublished: '2024-01-01',
+    dateModified: new Date().toISOString().split('T')[0],
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'INR',
+      description: 'Free 30-day trial. No credit card required.',
+      availability: 'https://schema.org/InStock',
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.8',
+      ratingCount: '120',
+      bestRating: '5',
+      worstRating: '1',
+    },
+    featureList: [
+      'Tenant management and onboarding',
+      'Room and bed allocation',
+      'Rent tracking and invoices',
+      'WhatsApp and SMS reminders',
+      'Expense tracking and profit reports',
+      'Multi-PG location management',
+      'CRM and lead management',
+      'PG directory listing',
+    ],
+    publisher: {
+      '@type': 'Organization',
+      name: 'Satz Techno Solutions',
+      url: SITE_URL,
+    },
+  }
+}
+
+/** Article schema for blog posts — enables Google rich results for articles */
+export function articleSchema(opts: {
+  title: string
+  description: string
+  slug: string
+  datePublished: string
+  dateModified?: string
+  image?: string
+  author?: string
+  keywords?: string[]
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: opts.title,
+    description: opts.description,
+    url: `${SITE_URL}/blog/${opts.slug}`,
+    image: opts.image ? `${SITE_URL}${opts.image}` : `${SITE_URL}/og-image.webp`,
+    datePublished: opts.datePublished,
+    dateModified: opts.dateModified || opts.datePublished,
+    author: {
+      '@type': 'Organization',
+      name: opts.author || 'Satz Techno Solutions',
+      url: SITE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Satz Techno Solutions',
+      url: SITE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/logo.png`,
+      },
+    },
+    keywords: opts.keywords?.join(', '),
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/blog/${opts.slug}`,
+    },
+  }
+}
+
+/** Blog (BlogPosting collection) schema for the blog listing page */
+export function blogSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'IPGM Blog — PG Management Tips & Insights',
+    description: 'Expert tips on PG management, rent collection, tenant management, and hostel operations in India.',
+    url: `${SITE_URL}/blog`,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Satz Techno Solutions',
+      url: SITE_URL,
+    },
+  }
+}

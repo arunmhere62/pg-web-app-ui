@@ -4,7 +4,7 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://www.indianpgmanagement.com/home</loc>
+    <loc>https://www.indianpgmanagement.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -68,6 +68,35 @@
     <loc>https://www.indianpgmanagement.com/refund-policy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+
+  <!-- Blog -->
+  <url>
+    <loc>https://www.indianpgmanagement.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Blog Posts -->
+  <url>
+    <loc>https://www.indianpgmanagement.com/blog/how-to-manage-pg-tenants-efficiently</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.indianpgmanagement.com/blog/pg-rent-collection-tips</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.indianpgmanagement.com/blog/best-pg-management-software-india</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.indianpgmanagement.com/blog/hostel-management-system-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <!--

@@ -24,7 +24,7 @@ import {
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Seo, organizationSchema, websiteSchema } from '@/components/seo'
+import { Seo, organizationSchema, websiteSchema, softwareApplicationSchema, faqPageSchema } from '@/components/seo'
 import bannerMultiplePgSelection from '@/assets/banner-add-images/mutiple-pg-selection.png'
 import bannerRentFollowUps from '@/assets/banner-add-images/rent-follow-ups.png'
 import bannerRoomBedAllocation from '@/assets/banner-add-images/room-bed-allocation.png'
@@ -231,11 +231,30 @@ export function PublicHome() {
   return (
     <>
       <Seo
-        title='IPGM — PG & Co-living Management System in India'
-        description='IPGM (Indian PG Management System) is the all-in-one platform for managing PG accommodations, co-living spaces, and hostels. Tenant management, rent tracking, CRM, WhatsApp messaging, and more. Find verified PGs across India.'
-        keywords={['PG management system', 'co-living India', 'PG management software', 'tenant management', 'rent tracking', 'hostel management', 'IPGM', 'Indian PG management']}
-        canonical='/home'
-        schema={[organizationSchema(), websiteSchema()]}
+        title='IPGM — Best PG Management Software & Hostel Management System in India'
+        description="IPGM is India's #1 PG management software. Manage tenants, rooms, rent payments, deposits, expenses, and daily operations for paying guest hostels and PG accommodations. Free 30-day trial. WhatsApp reminders, invoices, multi-PG support."
+        keywords={[
+          'PG management software', 'best PG management software India', 'hostel management system',
+          'PG management app', 'PG rent management app', 'tenant management software',
+          'rent collection app', 'PG owner app', 'co-living management software',
+          'paying guest management system', 'hostel software India', 'PG accommodation management',
+          'rent tracking software', 'multi PG management', 'IPGM', 'Indian PG management',
+          'PG management system Bangalore', 'PG management system Chennai',
+        ]}
+        canonical='/'
+        schema={[
+          organizationSchema(),
+          websiteSchema(),
+          softwareApplicationSchema(),
+          faqPageSchema([
+            { question: 'What is IPGM PG management software?', answer: 'IPGM (Indian PG Management System) is a cloud-based platform that helps PG owners and hostel managers manage tenants, rooms, rent payments, deposits, expenses, and daily operations from a single dashboard. It includes features like rent tracking, WhatsApp/SMS reminders, invoice generation, and multi-PG location management.' },
+            { question: 'Is IPGM free to use?', answer: 'IPGM offers a free 30-day trial with unlimited access to all features including beds, rooms, tenants, employees, WhatsApp/SMS reminders, and expense tracking. After the trial, you can choose a subscription plan that fits your needs.' },
+            { question: 'Can I manage multiple PG locations with IPGM?', answer: 'Yes, IPGM supports multi-PG management. You can manage all your PG locations from one dashboard, track occupancy across properties, and view consolidated reports.' },
+            { question: 'Does IPGM send rent reminders to tenants?', answer: 'Yes, IPGM automatically sends WhatsApp and SMS reminders to tenants for pending and partial rent payments. Owners also receive notifications so they never miss a payment.' },
+            { question: 'Is IPGM available on mobile?', answer: 'Yes, IPGM is available on Android, iOS, and Web. You can manage your PG operations from anywhere using the mobile app or web dashboard.' },
+            { question: 'How is IPGM different from Excel for PG management?', answer: 'IPGM replaces Excel sheets and WhatsApp groups with a centralized system. It provides real-time occupancy tracking, automatic rent reminders, professional invoices, expense tracking, and profit reports — all in one place. No more manual calculations or missed payments.' },
+          ]),
+        ]}
       />
       <div className='pb-16'>
         <div className='container mx-auto max-w-6xl px-4 py-10 sm:py-12'>
@@ -609,7 +628,142 @@ export function PublicHome() {
           </div>
         </div>
 
-        <div className='mt-8 rounded-3xl border border-primary/15 bg-[radial-gradient(900px_circle_at_20%_0%,rgba(37,99,235,0.14),transparent_55%),radial-gradient(900px_circle_at_85%_70%,rgba(16,185,129,0.10),transparent_55%),linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0.50))] p-6 backdrop-blur sm:p-10'>
+        {/* Why choose IPGM — comparison section with long-tail SEO keywords */}
+        <div className='mt-20 grid gap-3'>
+          <div className='flex items-center gap-3'>
+            <div className='h-10 w-10 rounded-2xl bg-primary/10' />
+            <div className='text-2xl font-semibold'>Why choose IPGM?</div>
+          </div>
+          <div className='text-sm text-muted-foreground'>
+            The best PG management software in India — built specifically for paying guest hostels and co-living spaces.
+          </div>
+        </div>
+
+        <div className='mt-6 overflow-hidden rounded-3xl border border-border bg-muted/30 p-6 sm:p-8'>
+          <div className='overflow-x-auto'>
+            <table className='w-full text-sm'>
+              <thead>
+                <tr className='border-b'>
+                  <th className='pb-3 text-left font-semibold text-foreground'>Feature</th>
+                  <th className='pb-3 text-center font-semibold text-primary'>IPGM</th>
+                  <th className='pb-3 text-center font-semibold text-muted-foreground'>Excel / Manual</th>
+                  <th className='pb-3 text-center font-semibold text-muted-foreground'>Other Apps</th>
+                </tr>
+              </thead>
+              <tbody className='divide-y'>
+                {[
+                  { feature: 'Automatic rent reminders (WhatsApp + SMS)', ipgm: true, excel: false, other: 'Partial' },
+                  { feature: 'Real-time bed & room vacancy tracking', ipgm: true, excel: false, other: 'Partial' },
+                  { feature: 'Professional invoices (rent/advance/refund)', ipgm: true, excel: false, other: true },
+                  { feature: 'Multi-PG location management', ipgm: true, excel: false, other: 'Partial' },
+                  { feature: 'Expense tracking & profit reports', ipgm: true, excel: 'Manual', other: 'Partial' },
+                  { feature: 'Owner notifications for pending rent', ipgm: true, excel: false, other: false },
+                  { feature: 'Mobile app (Android + iOS)', ipgm: true, excel: false, other: 'Partial' },
+                  { feature: 'Free 30-day trial (unlimited)', ipgm: true, excel: false, other: false },
+                  { feature: 'Built for Indian PG/hostel businesses', ipgm: true, excel: false, other: false },
+                ].map((row) => (
+                  <tr key={row.feature} className='py-2'>
+                    <td className='py-3 text-foreground'>{row.feature}</td>
+                    <td className='py-3 text-center'>
+                      {row.ipgm === true ? (
+                        <CheckCircle2 className='mx-auto size-5 text-primary' />
+                      ) : (
+                        <span className='text-muted-foreground'>{row.ipgm}</span>
+                      )}
+                    </td>
+                    <td className='py-3 text-center'>
+                      {row.excel === true ? (
+                        <CheckCircle2 className='mx-auto size-5 text-muted-foreground' />
+                      ) : row.excel === false ? (
+                        <XCircle className='mx-auto size-5 text-muted-foreground/40' />
+                      ) : (
+                        <span className='text-muted-foreground'>{row.excel}</span>
+                      )}
+                    </td>
+                    <td className='py-3 text-center'>
+                      {row.other === true ? (
+                        <CheckCircle2 className='mx-auto size-5 text-muted-foreground' />
+                      ) : row.other === false ? (
+                        <XCircle className='mx-auto size-5 text-muted-foreground/40' />
+                      ) : (
+                        <span className='text-muted-foreground'>{row.other}</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* FAQ section — visible content matching the FAQ schema for Google rich snippets */}
+        <div className='mt-20 grid gap-3'>
+          <div className='flex items-center gap-3'>
+            <div className='h-10 w-10 rounded-2xl bg-emerald-500/10' />
+            <div className='text-2xl font-semibold'>Frequently Asked Questions</div>
+          </div>
+          <div className='text-sm text-muted-foreground'>
+            Common questions about IPGM PG management software.
+          </div>
+        </div>
+
+        <div className='mt-6 rounded-3xl border border-emerald-500/10 bg-white/70 p-6 backdrop-blur sm:p-8'>
+          <div className='space-y-4'>
+            {[
+              { q: 'What is IPGM PG management software?', a: 'IPGM (Indian PG Management System) is a cloud-based platform that helps PG owners and hostel managers manage tenants, rooms, rent payments, deposits, expenses, and daily operations from a single dashboard. It includes features like rent tracking, WhatsApp/SMS reminders, invoice generation, and multi-PG location management.' },
+              { q: 'Is IPGM free to use?', a: 'IPGM offers a free 30-day trial with unlimited access to all features including beds, rooms, tenants, employees, WhatsApp/SMS reminders, and expense tracking. After the trial, you can choose a subscription plan that fits your needs.' },
+              { q: 'Can I manage multiple PG locations with IPGM?', a: 'Yes, IPGM supports multi-PG management. You can manage all your PG locations from one dashboard, track occupancy across properties, and view consolidated reports.' },
+              { q: 'Does IPGM send rent reminders to tenants?', a: 'Yes, IPGM automatically sends WhatsApp and SMS reminders to tenants for pending and partial rent payments. Owners also receive notifications so they never miss a payment.' },
+              { q: 'Is IPGM available on mobile?', a: 'Yes, IPGM is available on Android, iOS, and Web. You can manage your PG operations from anywhere using the mobile app or web dashboard.' },
+              { q: 'How is IPGM different from Excel for PG management?', a: 'IPGM replaces Excel sheets and WhatsApp groups with a centralized system. It provides real-time occupancy tracking, automatic rent reminders, professional invoices, expense tracking, and profit reports — all in one place. No more manual calculations or missed payments.' },
+            ].map((faq) => (
+              <details key={faq.q} className='group rounded-2xl border bg-white p-4'>
+                <summary className='cursor-pointer text-sm font-semibold text-foreground marker:hidden'>
+                  {faq.q}
+                </summary>
+                <p className='mt-3 text-sm text-muted-foreground'>{faq.a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+
+        {/* Blog teaser — SEO content hub */}
+        <div className='mt-20 grid gap-3'>
+          <div className='flex items-center gap-3'>
+            <div className='h-10 w-10 rounded-2xl bg-primary/10' />
+            <div className='text-2xl font-semibold'>Tips & Insights for PG Owners</div>
+          </div>
+          <div className='text-sm text-muted-foreground'>
+            Expert guides on PG management, rent collection, and growing your hostel business in India.
+          </div>
+        </div>
+
+        <div className='mt-6 grid gap-4 sm:grid-cols-3'>
+          {[
+            { slug: 'how-to-manage-pg-tenants-efficiently', title: 'How to Manage PG Tenants Efficiently', category: 'PG Management' },
+            { slug: 'pg-rent-collection-tips', title: 'PG Rent Collection Tips: Collect Rent on Time', category: 'Rent Collection' },
+            { slug: 'best-pg-management-software-india', title: 'Best PG Management Software in India (2026)', category: 'Software' },
+          ].map((post) => (
+            <Link
+              key={post.slug}
+              to={`/blog/${post.slug}`}
+              className='group rounded-2xl border border-border bg-white p-5 shadow-sm transition-all hover:shadow-md'
+            >
+              <Badge variant='outline' className='mb-3 w-fit'>{post.category}</Badge>
+              <h3 className='font-semibold leading-snug group-hover:text-primary'>{post.title}</h3>
+              <div className='mt-3 text-sm text-primary'>Read more →</div>
+            </Link>
+          ))}
+        </div>
+
+        <div className='mt-6 text-center'>
+          <Button asChild variant='outline'>
+            <Link to='/blog'>View All Articles</Link>
+          </Button>
+        </div>
+
+        {/* Final CTA */}
+        <div className='mt-20 rounded-3xl border border-primary/15 bg-[radial-gradient(900px_circle_at_20%_0%,rgba(37,99,235,0.14),transparent_55%),radial-gradient(900px_circle_at_85%_70%,rgba(16,185,129,0.10),transparent_55%),linear-gradient(180deg,rgba(255,255,255,0.78),rgba(255,255,255,0.50))] p-6 backdrop-blur sm:p-10'>
           <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
             <div>
               <div className='text-2xl font-semibold'>Ready to grow your PG with IPGM?</div>

@@ -27,7 +27,7 @@ const legalLinks = [
 export function PublicHeader({ className }: PublicHeaderProps) {
   const location = useLocation()
   const [scrolled, setScrolled] = useState(false)
-  const isHome = location.pathname === '/home'
+  const isHome = location.pathname === '/' || location.pathname === '/home'
 
   useEffect(() => {
     let frame = 0
@@ -58,8 +58,9 @@ export function PublicHeader({ className }: PublicHeaderProps) {
 
   const links = useMemo(
     () => [
-      { title: 'Home', href: '/home', isActive: location.pathname === '/home' },
+      { title: 'Home', href: '/', isActive: location.pathname === '/' || location.pathname === '/home' },
       { title: 'Find PG', href: '/pg-directory', isActive: location.pathname.startsWith('/pg-directory') },
+      { title: 'Blog', href: '/blog', isActive: location.pathname.startsWith('/blog') },
       { title: 'Subscriptions', href: '/subscriptions', isActive: location.pathname === '/subscriptions' },
       { title: 'FAQ', href: '/faq', isActive: location.pathname === '/faq' },
       { title: 'Contact Us', href: '/contact', isActive: location.pathname === '/contact' },
@@ -80,7 +81,7 @@ export function PublicHeader({ className }: PublicHeaderProps) {
       )}
     >
       <div className='container mx-auto flex h-full max-w-6xl items-center gap-3 px-4'>
-        <Link to='/home' className='flex items-center gap-2 text-base font-semibold'>
+        <Link to='/' className='flex items-center gap-2 text-base font-semibold'>
           <Logo className='size-15' alt='IPGM' />
           <span className='hidden sm:inline'>IPGM</span>
         </Link>
