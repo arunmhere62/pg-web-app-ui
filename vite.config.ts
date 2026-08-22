@@ -64,7 +64,7 @@ export default defineConfig({
           // UI libraries
           'ui-vendor': ['lucide-react', 'class-variance-authority', 'clsx', 'tailwind-merge'],
           // State management & data
-          'data-vendor': ['@reduxjs/toolkit', 'react-redux', 'react-helmet-async'],
+          'data-vendor': ['@reduxjs/toolkit', 'react-redux', 'react-helmet-async', 'redux-persist'],
           // Form libraries (only loaded on authenticated form screens)
           'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
           // Utilities

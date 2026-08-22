@@ -1,9 +1,11 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
-import { PublicLayout } from '@/components/layout/public-layout'
-import { TenantLayout } from '@/features/tenant/components/TenantLayout'
 import { Loader2 } from 'lucide-react'
+
+// Layouts — lazy-loaded to keep sidebar/nav code out of initial bundle
+const AuthenticatedLayout = lazy(() => import('@/components/layout/authenticated-layout').then(m => ({ default: m.AuthenticatedLayout })))
+const PublicLayout = lazy(() => import('@/components/layout/public-layout').then(m => ({ default: m.PublicLayout })))
+const TenantLayout = lazy(() => import('@/features/tenant/components/TenantLayout').then(m => ({ default: m.TenantLayout })))
 
 // ─── Lazy-loaded screens (code-splitting for smaller initial bundle) ───
 
@@ -38,14 +40,16 @@ const SubscriptionConfirmScreen = lazy(() => import('@/screens/subscription/Subs
 const SubscriptionHistoryScreen = lazy(() => import('@/screens/subscription/SubscriptionHistoryScreen').then(m => ({ default: m.SubscriptionHistoryScreen })))
 const FaqScreen = lazy(() => import('@/screens/faq/FaqScreen').then(m => ({ default: m.FaqScreen })))
 
-// Public — SEO pages (eagerly loaded for fast first paint)
+// Public — landing page eagerly loaded for fast first paint
 import { PublicHome } from '@/screens/PublicHome'
-import { RoleSelectionScreen } from '@/screens/auth/RoleSelectionScreen'
-import { LoginScreen } from '@/screens/auth/LoginScreen'
-import { TenantLoginScreen } from '@/screens/auth/TenantLoginScreen'
-import { SignupScreen } from '@/screens/auth/SignupScreen'
-import { PgDirectoryScreen } from '@/screens/public/PgDirectoryScreen'
-import { PgLocationScreen } from '@/screens/public/PgLocationScreen'
+
+// Public — auth & directory screens lazy-loaded to reduce initial bundle
+const RoleSelectionScreen = lazy(() => import('@/screens/auth/RoleSelectionScreen').then(m => ({ default: m.RoleSelectionScreen })))
+const LoginScreen = lazy(() => import('@/screens/auth/LoginScreen').then(m => ({ default: m.LoginScreen })))
+const TenantLoginScreen = lazy(() => import('@/screens/auth/TenantLoginScreen').then(m => ({ default: m.TenantLoginScreen })))
+const SignupScreen = lazy(() => import('@/screens/auth/SignupScreen').then(m => ({ default: m.SignupScreen })))
+const PgDirectoryScreen = lazy(() => import('@/screens/public/PgDirectoryScreen').then(m => ({ default: m.PgDirectoryScreen })))
+const PgLocationScreen = lazy(() => import('@/screens/public/PgLocationScreen').then(m => ({ default: m.PgLocationScreen })))
 
 // Public — lazy-loaded policy/info pages
 const AboutUsScreen = lazy(() => import('@/screens/public/AboutUsScreen').then(m => ({ default: m.AboutUsScreen })))

@@ -32,7 +32,6 @@ function parseFrontmatter(raw: string): { data: Record<string, unknown>; content
   const content = match[2]
   const data: Record<string, unknown> = {}
 
-  let currentKey = ''
   let currentArray: string[] | null = null
 
   for (const line of yamlBlock.split(/\r?\n/)) {
@@ -52,13 +51,11 @@ function parseFrontmatter(raw: string): { data: Record<string, unknown>; content
 
       if (value === '') {
         // Could be an array or multiline — assume array if next lines have "- "
-        currentKey = key
         currentArray = []
         data[key] = currentArray
       } else {
         // Strip quotes from scalar values
         data[key] = value.replace(/^["']|["']$/g, '')
-        currentKey = key
       }
     }
   }

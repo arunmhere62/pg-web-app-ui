@@ -1,10 +1,11 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { X, Sparkles, ArrowRight } from 'lucide-react'
+import { useLocation } from 'react-router-dom'
+import { X, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react'
 import { getCookie } from '@/lib/cookies'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from 'sonner'
+import { useSubmitLeadMutation } from '@/services/leadCaptureApi'
 
 const STORAGE_KEY = 'ipgm_lead_popup_dismissed'
 const SHOW_COUNT_KEY = 'ipgm_lead_popup_count'
@@ -39,13 +40,15 @@ function shouldShow(): boolean {
 }
 
 export function LeadCapturePopup() {
-  const navigate = useNavigate()
   const location = useLocation()
   const [visible, setVisible] = useState(false)
+  const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
   const triggeredRef = useRef(false)
   const secondShowTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [submitLead] = useSubmitLeadMutation()
 
   const dismiss = useCallback(() => {
     setVisible(false)
@@ -130,20 +133,29 @@ export function LeadCapturePopup() {
   }, [location.pathname])
 
   const handleSubmit = async () => {
-    const cleaned = phone.replace(/[^0-9]/g, '')
-    if (cleaned.length !== 10) {
+    if (!name.trim()) {
+      toast.error('Please enter your name')
+      return
+    }
+    const cleanedPhone = phone.replace(/[^0-9]/g, '')
+    if (cleanedPhone.length !== 10) {
       toast.error('Please enter a valid 10-digit phone number')
       return
     }
 
     setSubmitting(true)
     try {
-      // Store lead phone in localStorage so signup can pick it up
-      localStorage.setItem('ipgm_lead_phone', cleaned)
+      await submitLead({
+        name: name.trim(),
+        phone: cleanedPhone,
+      }).unwrap()
+
       localStorage.setItem(STORAGE_KEY, Date.now().toString())
       localStorage.setItem(SHOW_COUNT_KEY, String(MAX_SHOWS))
-      toast.success('Let\'s get you started!')
-      navigate(`/signup?phone=${cleaned}`)
+      setSubmitted(true)
+      toast.success('Thank you! We will contact you soon.')
+    } catch {
+      toast.error('Something went wrong. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -181,43 +193,73 @@ export function LeadCapturePopup() {
           Join 500+ PG owners using IPGM to manage tenants, collect rent automatically, and grow their business. No credit card needed.
         </p>
 
-        {/* Phone input */}
-        <div className='mt-6'>
-          <div className='flex items-center gap-2'>
-            <div className='flex items-center justify-center rounded-l-lg border border-r-0 border-input bg-muted px-3 text-sm font-medium text-muted-foreground'>
-              +91
+        {submitted ? (
+          <div className='mt-6 flex flex-col items-center text-center'>
+            <div className='mb-4 flex size-14 items-center justify-center rounded-full bg-green-100'>
+              <CheckCircle2 className='size-8 text-green-600' />
             </div>
-            <Input
-              type='tel'
-              inputMode='numeric'
-              maxLength={10}
-              placeholder='Enter your 10-digit number'
-              value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
-              className='rounded-l-none'
-              autoFocus
-            />
+            <h3 className='text-lg font-semibold text-foreground'>We'll be in touch!</h3>
+            <p className='mt-2 text-sm text-muted-foreground'>
+              Thank you for your interest in IPGM. Our team will reach out to you at <strong>+91{phone}</strong> shortly.
+            </p>
+            <Button
+              onClick={dismiss}
+              className='mt-6 w-full'
+              size='lg'
+            >
+              Close
+            </Button>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Name input */}
+            <div className='mt-6 space-y-3'>
+              <Input
+                type='text'
+                placeholder='Your name'
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                autoFocus
+              />
 
-        {/* CTA */}
-        <Button
-          onClick={handleSubmit}
-          disabled={submitting || phone.length !== 10}
-          className='mt-4 w-full'
-          size='lg'
-        >
-          Get Started Free
-          <ArrowRight className='ml-2 size-4' />
-        </Button>
+              {/* Phone input */}
+              <div className='flex items-center gap-2'>
+                <div className='flex items-center justify-center rounded-l-lg border border-r-0 border-input bg-muted px-3 text-sm font-medium text-muted-foreground'>
+                  +91
+                </div>
+                <Input
+                  type='tel'
+                  inputMode='numeric'
+                  maxLength={10}
+                  placeholder='Enter your 10-digit number'
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+                  className='rounded-l-none'
+                />
+              </div>
+            </div>
 
-        {/* Trust signals */}
-        <div className='mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground'>
-          <span>✓ Free 30-day trial</span>
-          <span>✓ No credit card</span>
-          <span>✓ Setup in 5 minutes</span>
-        </div>
+            {/* CTA */}
+            <Button
+              onClick={handleSubmit}
+              disabled={submitting || !name.trim() || phone.length !== 10}
+              className='mt-4 w-full'
+              size='lg'
+            >
+              {submitting ? 'Submitting...' : 'Get Started Free'}
+              {!submitting && <ArrowRight className='ml-2 size-4' />}
+            </Button>
+
+            {/* Trust signals */}
+            <div className='mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground'>
+              <span>✓ Free 30-day trial</span>
+              <span>✓ No credit card</span>
+              <span>✓ Setup in 5 minutes</span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

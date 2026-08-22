@@ -17,6 +17,7 @@ export * from './pgLocationsApi'
 export * from './pgUsersApi'
 export * from './rbacApi'
 export * from './storageApi'
+export * from './leadCaptureApi'
 
 export * as tenantsApi from './tenantsApi'
 export * as paymentsApi from './paymentsApi'
